@@ -2,8 +2,9 @@ import axios from 'axios';
 import type { Exercise, WorkoutSession, SetLogRequest, SetResponseDTO, LoggedSet, NextSessionTarget } from '../types';
 
 export const API = axios.create({
-  baseURL: 'http://localhost:8081/api', // default spring boot port
+  baseURL: 'http://localhost:8081/api',
 });
+
 
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem('iron_ledger_token');
@@ -36,7 +37,6 @@ export const getSetsForSession = (sessionId: number) => API.get<LoggedSet[]>(`/s
 export const logSet = (request: SetLogRequest) => API.post<SetResponseDTO>('/sets', request).then(r => r.data);
 export const updateSet = (setId: number, request: SetLogRequest) => API.put<SetResponseDTO>(`/sets/${setId}`, request).then(r => r.data);
 
-// Target APIs
 export const getTargets = (exerciseId: number, status: string = 'PENDING') =>
   API.get<NextSessionTarget[]>(`/targets?exerciseId=${exerciseId}&status=${status}`).then(r => r.data);
 export const completeTarget = (id: number) => API.patch<NextSessionTarget>(`/targets/${id}/complete`).then(r => r.data);
