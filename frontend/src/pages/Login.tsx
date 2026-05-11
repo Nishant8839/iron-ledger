@@ -13,9 +13,9 @@ const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+
     try {
-      const response = await axios.post('http://localhost:8081/api/auth/login', { username, password });
+      const response = await axios.post('https://iron-ledger-twy4.onrender.com/api/auth/login', { username, email, password });, { username, password });
       login(response.data.token, response.data.username);
       navigate('/');
     } catch (err: any) {

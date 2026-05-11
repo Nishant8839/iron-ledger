@@ -8,30 +8,30 @@ const Signup: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  
-  const [errors, setErrors] = useState<{username?: string, email?: string, password?: string, confirm?: string, api?: string}>({});
+
+  const [errors, setErrors] = useState<{ username?: string, email?: string, password?: string, confirm?: string, api?: string }>({});
   const [isValid, setIsValid] = useState(false);
-  
+
   const navigate = useNavigate();
   const { login } = useAuth();
 
   useEffect(() => {
     const newErrors: typeof errors = {};
-    
+
     if (username && (username.length < 3 || username.length > 20)) {
       newErrors.username = 'Username must be 3-20 characters';
     }
-    
+
     if (password && (password.length < 8 || !/\d/.test(password))) {
       newErrors.password = 'Password must be min 8 chars and contain 1 number';
     }
-    
+
     if (confirmPassword && password !== confirmPassword) {
       newErrors.confirm = 'Passwords do not match';
     }
-    
+
     setErrors(newErrors);
-    
+
     if (username && email && password && confirmPassword && Object.keys(newErrors).length === 0) {
       setIsValid(true);
     } else {
@@ -42,17 +42,17 @@ const Signup: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValid) return;
-    
+
     try {
-      const response = await axios.post('http://localhost:8081/api/auth/signup', { username, email, password });
+      const response = await axios.post('https://iron-ledger-twy4.onrender.com/api/auth/signup', { username, email, password });, { username, email, password });
       login(response.data.token, response.data.username);
       navigate('/');
     } catch (err: any) {
       if (!err.response) {
         setErrors({ ...errors, api: 'Cannot connect to server. Is the backend running on port 8081?' });
       } else {
-        const errorMsg = typeof err.response.data === 'string' 
-          ? err.response.data 
+        const errorMsg = typeof err.response.data === 'string'
+          ? err.response.data
           : err.response.data?.message || 'An error occurred during signup';
         setErrors({ ...errors, api: errorMsg });
       }
@@ -87,7 +87,7 @@ const Signup: React.FC = () => {
           />
           {errors.username && <div style={{ color: '#ff3b3b', fontSize: '12px', marginTop: '4px', fontFamily: 'var(--font-data)' }}>{errors.username}</div>}
         </div>
-        
+
         <div>
           <input
             type="email"

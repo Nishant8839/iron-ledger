@@ -45,8 +45,8 @@ export default function SessionHistory() {
         <h1 style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text)', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0 }}>
           Session History
         </h1>
-        <button 
-          onClick={() => window.open('http://localhost:8081/api/export/csv', '_blank')}
+        <button
+          onClick={() => window.open('https://iron-ledger-twy4.onrender.com/api/export/csv', '_blank')}
           className="iron-btn iron-btn-secondary"
           style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', fontSize: '12px' }}
         >
@@ -58,9 +58,9 @@ export default function SessionHistory() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {sessions.map(session => (
-          <SessionAccordionCard 
-            key={session.id} 
-            session={session} 
+          <SessionAccordionCard
+            key={session.id}
+            session={session}
             onDelete={handleDelete}
             onEdit={(s) => setEditingSession(s)}
           />
@@ -71,7 +71,7 @@ export default function SessionHistory() {
       </div>
 
       {editingSession && (
-        <SessionEditModal 
+        <SessionEditModal
           session={editingSession}
           exercises={exercises}
           onClose={() => setEditingSession(null)}
