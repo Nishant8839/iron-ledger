@@ -1,0 +1,18 @@
+# --- Backend (Spring Boot) ---
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+*.class
+*.log
+
+# --- IDEs and OS Files ---
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# --- Database ---
+*.mv.db
+*.trace.db
