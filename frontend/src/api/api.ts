@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { Exercise, WorkoutSession, SetLogRequest, SetResponseDTO, LoggedSet, NextSessionTarget } from '../types';
 
 export const API = axios.create({
-  baseURL: 'https://iron-ledger-twy4.onrender.com/',
+  baseURL: 'https://iron-ledger-twy4.onrender.com/api',
 });
 
 
