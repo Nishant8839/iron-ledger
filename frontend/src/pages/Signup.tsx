@@ -3,6 +3,11 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 5000;
+
+const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
 const Signup: React.FC = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -11,6 +16,8 @@ const Signup: React.FC = () => {
 
   const [errors, setErrors] = useState<{ username?: string, email?: string, password?: string, confirm?: string, api?: string }>({});
   const [isValid, setIsValid] = useState(false);
+  const [status, setStatus] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -43,20 +50,42 @@ const Signup: React.FC = () => {
     e.preventDefault();
     if (!isValid) return;
 
-    try {
-      const response = await axios.post('https://iron-ledger-twy4.onrender.com/api/auth/signup', { username, email, password });
-      login(response.data.token, response.data.username);
-      navigate('/');
-    } catch (err: any) {
-      if (!err.response) {
-        setErrors({ ...errors, api: 'Cannot reach the server.' });
-      } else {
-        const errorMsg = typeof err.response.data === 'string'
-          ? err.response.data
-          : err.response.data?.message || 'An error occurred during signup';
-        setErrors({ ...errors, api: errorMsg });
+    setErrors({});
+    setStatus('');
+    setLoading(true);
+
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        const response = await axios.post(
+          'https://iron-ledger-twy4.onrender.com/api/auth/signup',
+          { username, email, password },
+          { timeout: 15000 }
+        );
+        login(response.data.token, response.data.username);
+        navigate('/');
+        return;
+      } catch (err: any) {
+        if (err.response) {
+          // Server responded with an error (e.g. username taken) — don't retry
+          const errorMsg = typeof err.response.data === 'string'
+            ? err.response.data
+            : err.response.data?.message || 'An error occurred during signup';
+          setErrors({ api: errorMsg });
+          setLoading(false);
+          return;
+        }
+        // No response — server may be cold-starting
+        if (attempt < MAX_RETRIES) {
+          setStatus(`Server is waking up… retrying (${attempt}/${MAX_RETRIES})`);
+          await sleep(RETRY_DELAY_MS);
+        } else {
+          setErrors({ api: 'Server is unavailable after multiple attempts. Please try again in a minute.' });
+        }
       }
     }
+
+    setLoading(false);
+    setStatus('');
   };
 
   return (
@@ -74,6 +103,12 @@ const Signup: React.FC = () => {
         </div>
       )}
 
+      {status && !errors.api && (
+        <div style={{ border: '1px solid var(--color-accent)', color: 'var(--color-accent)', padding: '12px', marginBottom: '20px', width: '100%', maxWidth: '320px', textAlign: 'center', backgroundColor: 'rgba(255,140,0,0.1)', fontFamily: 'var(--font-data)', fontSize: '13px' }}>
+          ⏳ {status}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', width: '100%', maxWidth: '320px', gap: '16px' }}>
         <div>
           <input
@@ -83,6 +118,7 @@ const Signup: React.FC = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
+            disabled={loading}
             style={{ width: '100%' }}
           />
           {errors.username && <div style={{ color: '#ff3b3b', fontSize: '12px', marginTop: '4px', fontFamily: 'var(--font-data)' }}>{errors.username}</div>}
@@ -96,6 +132,7 @@ const Signup: React.FC = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            disabled={loading}
             style={{ width: '100%' }}
           />
         </div>
@@ -108,6 +145,7 @@ const Signup: React.FC = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={loading}
             style={{ width: '100%' }}
           />
           {errors.password && <div style={{ color: '#ff3b3b', fontSize: '12px', marginTop: '4px', fontFamily: 'var(--font-data)' }}>{errors.password}</div>}
@@ -121,13 +159,19 @@ const Signup: React.FC = () => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
+            disabled={loading}
             style={{ width: '100%' }}
           />
           {errors.confirm && <div style={{ color: '#ff3b3b', fontSize: '12px', marginTop: '4px', fontFamily: 'var(--font-data)' }}>{errors.confirm}</div>}
         </div>
 
-        <button type="submit" className="iron-btn-primary" disabled={!isValid} style={{ marginTop: '8px', opacity: isValid ? 1 : 0.5, cursor: isValid ? 'pointer' : 'not-allowed' }}>
-          SIGN UP
+        <button
+          type="submit"
+          className="iron-btn-primary"
+          disabled={!isValid || loading}
+          style={{ marginTop: '8px', opacity: (isValid && !loading) ? 1 : 0.5, cursor: (isValid && !loading) ? 'pointer' : 'not-allowed' }}
+        >
+          {loading ? 'CONNECTING…' : 'SIGN UP'}
         </button>
       </form>
 

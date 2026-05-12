@@ -3,28 +3,55 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 5000;
+
+const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [status, setStatus] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setStatus('');
+    setLoading(true);
 
-    try {
-      const response = await axios.post('https://iron-ledger-twy4.onrender.com/api/auth/login', { username, password });
-      login(response.data.token, response.data.username);
-      navigate('/');
-    } catch (err: any) {
-      if (!err.response) {
-        setError('Cannot reach the server. The backend may be waking up on Render — please wait 30 seconds and try again.');
-      } else {
-        setError('Invalid username or password.');
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        const response = await axios.post(
+          'https://iron-ledger-twy4.onrender.com/api/auth/login',
+          { username, password },
+          { timeout: 15000 }
+        );
+        login(response.data.token, response.data.username);
+        navigate('/');
+        return;
+      } catch (err: any) {
+        if (err.response) {
+          // Server responded — wrong credentials, don't retry
+          setError('Invalid username or password.');
+          setLoading(false);
+          return;
+        }
+        // No response — server may be cold-starting
+        if (attempt < MAX_RETRIES) {
+          setStatus(`Server is waking up… retrying (${attempt}/${MAX_RETRIES})`);
+          await sleep(RETRY_DELAY_MS);
+        } else {
+          setError('Server is unavailable after multiple attempts. Please try again in a minute.');
+        }
       }
     }
+
+    setLoading(false);
+    setStatus('');
   };
 
   return (
@@ -42,6 +69,12 @@ const Login: React.FC = () => {
         </div>
       )}
 
+      {status && !error && (
+        <div style={{ border: '1px solid var(--color-accent)', color: 'var(--color-accent)', padding: '12px', marginBottom: '20px', width: '100%', maxWidth: '320px', textAlign: 'center', backgroundColor: 'rgba(255,140,0,0.1)', fontFamily: 'var(--font-data)', fontSize: '13px' }}>
+          ⏳ {status}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', width: '100%', maxWidth: '320px', gap: '16px' }}>
         <input
           type="text"
@@ -50,6 +83,7 @@ const Login: React.FC = () => {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
+          disabled={loading}
         />
         <input
           type="password"
@@ -58,9 +92,15 @@ const Login: React.FC = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          disabled={loading}
         />
-        <button type="submit" className="iron-btn-primary" style={{ marginTop: '8px' }}>
-          LOGIN
+        <button
+          type="submit"
+          className="iron-btn-primary"
+          style={{ marginTop: '8px', opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}
+          disabled={loading}
+        >
+          {loading ? 'CONNECTING…' : 'LOGIN'}
         </button>
       </form>
 
