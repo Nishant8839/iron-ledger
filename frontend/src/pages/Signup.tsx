@@ -44,7 +44,7 @@ const Signup: React.FC = () => {
     if (!isValid) return;
 
     try {
-      const response = await axios.post('https://iron-ledger-twy4.onrender.com/api/auth/signup', { username, email, password });, { username, email, password });
+      const response = await axios.post('https://iron-ledger-twy4.onrender.com/api/auth/signup', { username, email, password });
       login(response.data.token, response.data.username);
       navigate('/');
     } catch (err: any) {
