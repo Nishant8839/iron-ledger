@@ -49,7 +49,7 @@ const Signup: React.FC = () => {
       navigate('/');
     } catch (err: any) {
       if (!err.response) {
-        setErrors({ ...errors, api: 'Cannot reach the server. The backend may be waking up on Render — please wait 30 seconds and try again.' });
+        setErrors({ ...errors, api: 'Cannot reach the server.' });
       } else {
         const errorMsg = typeof err.response.data === 'string'
           ? err.response.data
