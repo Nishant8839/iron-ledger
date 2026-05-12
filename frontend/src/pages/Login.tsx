@@ -15,12 +15,12 @@ const Login: React.FC = () => {
     setError('');
 
     try {
-      const response = await axios.post('https://iron-ledger-twy4.onrender.com/api/auth/login', { username, email, password });, { username, password });
+      const response = await axios.post('https://iron-ledger-twy4.onrender.com/api/auth/login', { username, password });
       login(response.data.token, response.data.username);
       navigate('/');
     } catch (err: any) {
       if (!err.response) {
-        setError('Cannot connect to server. Is the backend running on port 8081?');
+        setError('Cannot reach the server. The backend may be waking up on Render — please wait 30 seconds and try again.');
       } else {
         setError('Invalid username or password.');
       }
