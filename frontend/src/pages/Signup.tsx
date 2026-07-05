@@ -3,8 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
-const MAX_RETRIES = 3;
-const RETRY_DELAY_MS = 5000;
+const MAX_RETRIES = 6;
+const RETRY_DELAY_MS = 8000;
 
 const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 

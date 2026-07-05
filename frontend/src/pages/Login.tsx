@@ -3,8 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
-const MAX_RETRIES = 3;
-const RETRY_DELAY_MS = 5000;
+const MAX_RETRIES = 6;
+const RETRY_DELAY_MS = 8000;
 
 const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
@@ -28,7 +28,7 @@ const Login: React.FC = () => {
         const response = await axios.post(
           'https://iron-ledger-twy4.onrender.com/api/auth/login',
           { username, password },
-          { timeout: 15000 }
+          { timeout: 20000 }
         );
         login(response.data.token, response.data.username);
         navigate('/');
