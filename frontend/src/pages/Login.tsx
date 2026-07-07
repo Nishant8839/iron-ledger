@@ -28,7 +28,7 @@ const Login: React.FC = () => {
         const response = await axios.post(
           'https://iron-ledger-twy4.onrender.com/api/auth/login',
           { username, password },
-          { timeout: 20000 }
+          { timeout: 60000 }
         );
         login(response.data.token, response.data.username);
         navigate('/');
