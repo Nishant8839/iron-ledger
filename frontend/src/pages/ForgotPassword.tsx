@@ -15,7 +15,7 @@ const ForgotPassword = () => {
         setError('');
 
         try {
-            const response = await axios.post('https://iron-ledger-twy4.onrender.com', { email }, {
+            const response = await axios.post('https://iron-ledger-twy4.onrender.com/api/auth/forgot-password', { email }, {
                 timeout: 60000
             });
             setMessage(response.data);
