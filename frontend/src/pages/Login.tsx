@@ -104,11 +104,15 @@ const Login: React.FC = () => {
         </button>
       </form>
 
-      <div style={{ marginTop: '32px' }}>
+      <div style={{ marginTop: '32px', display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+        <Link to="/forgot-password" style={{ color: 'var(--color-accent)', textDecoration: 'none', fontFamily: 'var(--font-data)', fontSize: '13px' }}>
+          Forgot Password?
+        </Link>
         <Link to="/signup" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontFamily: 'var(--font-data)', fontSize: '14px' }}>
           No account? Sign up &rarr;
         </Link>
       </div>
+
     </div>
   );
 };

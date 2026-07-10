@@ -19,10 +19,10 @@ public class ProgressionEngine {
 
     /**
      * Calculate estimated 1RM using rep-range-specific formulas.
-     * reps == 1       → exact weight
-     * reps 2–5        → Brzycki
-     * reps 6–10       → Epley
-     * reps > 10       → null (unreliable)
+     * reps == 1 → exact weight
+     * reps 2–5 → Brzycki
+     * reps 6–10 → Epley
+     * reps > 10 → null (unreliable)
      */
     public Double calculateE1RM(double weight, int reps) {
         if (reps == 1) {
@@ -91,8 +91,7 @@ public class ProgressionEngine {
                 exerciseId,
                 currentSession.getDate(),
                 currentSession.getUser(),
-                PageRequest.of(0, 1)
-        );
+                PageRequest.of(0, 1));
 
         if (previousSessions.isEmpty()) {
             return ProgressionResultDTO.builder()
@@ -107,8 +106,7 @@ public class ProgressionEngine {
         // Get sets from the previous session for this exercise
         WorkoutSession prevSession = previousSessions.get(0);
         List<LoggedSet> previousSets = loggedSetRepository.findByExerciseIdAndWorkoutSessionIdOrderBySetOrderAsc(
-                exerciseId, prevSession.getId()
-        );
+                exerciseId, prevSession.getId());
 
         Double previousE1RM = getSessionReferenceE1RM(previousSets);
 
