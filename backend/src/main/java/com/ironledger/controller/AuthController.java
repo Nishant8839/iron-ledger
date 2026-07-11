@@ -109,7 +109,14 @@ public class AuthController {
             tokenRepository.save(resetToken);
 
             // Send email
-            emailService.sendpasswordResetEmail(user.getEmail(), tokenString);
+            try {
+                emailService.sendpasswordResetEmail(user.getEmail(), tokenString);
+            } catch (Exception e) {
+                // Delete the token we just created so we don't leave orphaned tokens
+                tokenRepository.delete(resetToken);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Email configuration error: Could not connect to SMTP server. Please check your Render MAIL_PASSWORD environment variable.");
+            }
         }
 
         // Always return OK so hackers can't guess which emails exist
