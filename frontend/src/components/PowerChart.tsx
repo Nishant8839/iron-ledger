@@ -104,7 +104,7 @@ export default function PowerChart({ topSets, exercises, selectedExerciseId, onE
         ))}
       </select>
 
-      <div style={{ width: '100%', height: '320px' }}>
+      <div style={{ width: '100%', height: '320px', minHeight: '320px' }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 20, right: 20, bottom: 0, left: -20 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#1e2030" vertical={false} />

@@ -85,7 +85,7 @@ export default function ProgressionTimeline({ exercises, selectedExerciseId, onE
         </select>
       </div>
 
-      <div style={{ width: '100%', height: '400px', marginTop: '16px' }}>
+      <div style={{ width: '100%', height: '400px', minHeight: '400px', marginTop: '16px' }}>
         {loading ? (
           <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>Loading...</div>
         ) : data.length === 0 ? (
