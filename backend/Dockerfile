@@ -2,6 +2,9 @@
 FROM eclipse-temurin:23-jdk
 WORKDIR /app
 
+# Cache-bust: forces Docker to re-copy source and rebuild on every deploy
+ARG CACHEBUST=1
+
 # Copy all the backend files into the container
 COPY . .
 
