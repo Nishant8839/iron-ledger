@@ -11,8 +11,11 @@ import org.springframework.stereotype.Service;
 public class EmailService {
     private final JavaMailSender mailSender;
 
+    @org.springframework.beans.factory.annotation.Value("${app.frontend.url:http://localhost:5173}")
+    private String frontendUrl;
+
     public void sendpasswordResetEmail(String to, String token) {
-        String resetUrl = "https://iron-ledger-nishant.vercel.app/reset-password?token=" + token;
+        String resetUrl = frontendUrl + "/reset-password?token=" + token;
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject("iron ledger - password Reset Request");
