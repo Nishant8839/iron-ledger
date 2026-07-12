@@ -95,8 +95,9 @@ public class AuthController {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
 
-            // Delete old token if exists
+            // Delete old token if exists and flush immediately to avoid UniqueConstraint exception on insert
             tokenRepository.deleteByUserId(user.getId());
+            tokenRepository.flush();
 
             // Create new token (expires in 15 mins)
             String tokenString = UUID.randomUUID().toString();
