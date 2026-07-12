@@ -116,7 +116,7 @@ public class AuthController {
                 // Delete the token we just created so we don't leave orphaned tokens
                 tokenRepository.delete(resetToken);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Email configuration error: Could not connect to SMTP server. Please check your Render MAIL_PASSWORD environment variable.");
+                    .body("Email configuration error: " + e.getMessage());
             }
         }
 
