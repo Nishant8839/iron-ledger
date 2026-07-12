@@ -12,7 +12,7 @@ public class EmailService {
     private final JavaMailSender mailSender;
 
     public void sendpasswordResetEmail(String to, String token) {
-        String resetUrl = "https://iron-ledger-nishant.vercel.app?reset-password?token=" + token;
+        String resetUrl = "https://iron-ledger-nishant.vercel.app/reset-password?token=" + token;
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject("iron ledger - password Reset Request");
