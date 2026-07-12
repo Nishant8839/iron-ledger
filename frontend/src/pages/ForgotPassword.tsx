@@ -20,7 +20,12 @@ const ForgotPassword = () => {
             });
             setMessage(response.data);
         } catch (err: any) {
-            setError(err.response?.data || 'Failed to send reset link. Try again.');
+            if (err.response?.data) {
+                const data = err.response.data;
+                setError(typeof data === 'string' ? data : (data.message || JSON.stringify(data)));
+            } else {
+                setError(err.message || 'Failed to send reset link. Try again.');
+            }
         } finally {
             setLoading(false);
         }
