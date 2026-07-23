@@ -49,7 +49,7 @@ const ResetPassword = () => {
             <div className="auth-container">
                 <div className="auth-box glassmorphism">
                     <h2>Error</h2>
-                    <p style={{ color: '#ef4444', textAlign: 'center' }}>{error}</p>
+                    <p style={{ color: '#B54A32', textAlign: 'center' }}>{error}</p>
                     <p className="auth-footer"><Link to="/login">Go to Login</Link></p>
                 </div>
             </div>
@@ -63,7 +63,7 @@ const ResetPassword = () => {
 
                 {message ? (
                     <div style={{ textAlign: 'center' }}>
-                        <p style={{ color: '#4ade80', marginBottom: '20px' }}>{message}</p>
+                        <p style={{ color: '#7A9A6D', marginBottom: '20px' }}>{message}</p>
                         <Link to="/login" className="auth-button" style={{ display: 'block', textDecoration: 'none', textAlign: 'center' }}>Log in now</Link>
                     </div>
                 ) : (
@@ -90,7 +90,7 @@ const ResetPassword = () => {
                             />
                         </div>
 
-                        {error && <p style={{ color: '#d28d3fff', marginBottom: '15px', fontSize: '14px', textAlign: 'center' }}>{error}</p>}
+                        {error && <p style={{ color: '#B54A32', marginBottom: '15px', fontSize: '14px', textAlign: 'center' }}>{error}</p>}
 
                         <button type="submit" className="auth-button" disabled={loading}>
                             {loading ? 'Resetting...' : 'Reset Password'}

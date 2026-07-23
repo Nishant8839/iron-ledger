@@ -109,14 +109,12 @@ public class AuthController {
 
             tokenRepository.save(resetToken);
 
-            // Send email
+            // Send email via Resend API
             try {
-                emailService.sendpasswordResetEmail(user.getEmail(), tokenString);
+                emailService.sendPasswordResetEmail(user.getEmail(), tokenString);
             } catch (Exception e) {
-                // Delete the token we just created so we don't leave orphaned tokens
-                tokenRepository.delete(resetToken);
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Email configuration error: " + e.getMessage());
+                System.err.println("Failed to send reset email: " + e.getMessage());
+                // Still return OK — don't reveal if email failed
             }
         }
 

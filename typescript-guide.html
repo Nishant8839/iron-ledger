@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Iron Ledger — TypeScript Guide</title>
+  <meta name="description" content="An interactive TypeScript guide explaining every concept used in the Iron Ledger workout tracker project — interfaces, generics, union types, React.FC, custom hooks and more."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --lime:       #A8E63D;
+      --lime-glow:  #C5F06A;
+      --lime-dim:   rgba(168,230,61,0.12);
+      --cream:      #F7F3E8;
+      --bg:         #0E1108;
+      --bg2:        #151A0D;
+      --card:       #192010;
+      --card2:      #1E2A12;
+      --border:     rgba(168,230,61,0.18);
+      --border2:    rgba(168,230,61,0.08);
+      --text:       #F7F3E8;
+      --muted:      #9DAA85;
+      --green-dark: #2D4A0E;
+      --amber:      #F4B942;
+      --blue:       #5CC8FF;
+      --purple:     #C77DFF;
+      --coral:      #FF7B5C;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.65;overflow-x:hidden}
+    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--border2) 1px,transparent 1px),linear-gradient(90deg,var(--border2) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0}
+    ::-webkit-scrollbar{width:6px}
+    ::-webkit-scrollbar-track{background:var(--bg)}
+    ::-webkit-scrollbar-thumb{background:var(--green-dark);border-radius:4px}
+    ::-webkit-scrollbar-thumb:hover{background:var(--lime)}
+    #progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--lime),var(--lime-glow));width:0%;z-index:9999;box-shadow:0 0 12px var(--lime)}
+    nav{position:sticky;top:0;z-index:100;background:rgba(14,17,8,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 clamp(1rem,4vw,2rem)}
+    .nav-inner{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;height:60px}
+    .nav-logo{font-family:'Outfit',sans-serif;font-size:1.25rem;font-weight:900;color:var(--lime);text-decoration:none;display:flex;align-items:center;gap:8px;letter-spacing:-0.5px}
+    .nav-logo span{color:var(--cream)}
+    .nav-pill{background:var(--lime-dim);border:1px solid var(--border);color:var(--lime);font-size:.7rem;font-weight:700;letter-spacing:1px;padding:3px 10px;border-radius:20px;text-transform:uppercase}
+    .nav-chapters{display:flex;gap:4px;list-style:none}
+    .nav-chapters a{display:block;padding:5px 11px;border-radius:8px;color:var(--muted);font-size:.8rem;font-weight:500;text-decoration:none;transition:all .2s}
+    .nav-chapters a:hover{color:var(--lime);background:var(--lime-dim)}
+    .hero{position:relative;z-index:1;text-align:center;padding:90px clamp(1rem,5vw,2rem) 80px;max-width:860px;margin:auto}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--lime-dim);border:1px solid var(--border);border-radius:999px;padding:6px 18px;font-size:.75rem;font-weight:600;color:var(--lime);letter-spacing:.5px;margin-bottom:28px}
+    .dot{width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 6px var(--lime);animation:pulse 1.8s infinite}
+    @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.6}}
+    .hero h1{font-family:'Outfit',sans-serif;font-size:clamp(2.4rem,7vw,4.2rem);font-weight:900;line-height:1.1;letter-spacing:-1.5px;color:var(--cream)}
+    .hero h1 .hl{color:var(--lime);text-shadow:0 0 40px rgba(168,230,61,.4)}
+    .hero-sub{margin-top:20px;font-size:1.1rem;color:var(--muted);max-width:600px;margin-left:auto;margin-right:auto}
+    .hero-chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:32px}
+    .chip{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:.78rem;font-weight:600;color:var(--lime);cursor:pointer;text-decoration:none;transition:all .2s}
+    .chip:hover{background:var(--lime-dim);border-color:var(--lime);transform:translateY(-2px)}
+    .layout{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 clamp(1rem,4vw,2rem) 80px;display:grid;grid-template-columns:240px 1fr;gap:36px}
+    @media(max-width:780px){.layout{grid-template-columns:1fr}.sidebar{display:none}}
+    .sidebar{position:sticky;top:80px;align-self:start;max-height:calc(100vh - 100px);overflow-y:auto}
+    .sidebar-title{font-size:.65rem;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;padding-left:4px}
+    .sidebar ul{list-style:none}
+    .sidebar ul li a{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;color:var(--muted);font-size:.83rem;font-weight:500;text-decoration:none;transition:all .2s;border-left:2px solid transparent}
+    .sidebar ul li a:hover,.sidebar ul li a.active{color:var(--lime);background:var(--lime-dim);border-left-color:var(--lime)}
+    .sidebar ul li a .num{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--green-dark);min-width:18px}
+    .sidebar ul li a:hover .num,.sidebar ul li a.active .num{color:var(--lime-glow)}
+    .content{min-width:0}
+    .chapter{margin-bottom:56px;scroll-margin-top:80px}
+    .chapter-header{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+    .chapter-num{font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:600;color:var(--lime);background:var(--lime-dim);border:1px solid var(--border);border-radius:6px;padding:3px 8px;white-space:nowrap}
+    .chapter h2{font-family:'Outfit',sans-serif;font-size:1.6rem;font-weight:800;letter-spacing:-.5px;color:var(--cream)}
+    .chapter-tag{margin-left:auto;font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:999px}
+    .tag-type{background:rgba(92,200,255,.12);color:var(--blue);border:1px solid rgba(92,200,255,.25)}
+    .tag-generic{background:rgba(199,125,255,.12);color:var(--purple);border:1px solid rgba(199,125,255,.25)}
+    .tag-react{background:rgba(255,107,53,.12);color:var(--coral);border:1px solid rgba(255,107,53,.25)}
+    .tag-pattern{background:rgba(244,185,66,.12);color:var(--amber);border:1px solid rgba(244,185,66,.25)}
+    .tag-util{background:var(--lime-dim);color:var(--lime);border:1px solid var(--border)}
+    .chapter p{color:var(--muted);margin-bottom:14px;font-size:.97rem}
+    .chapter p strong{color:var(--cream);font-weight:600}
+    .divider{height:1px;background:linear-gradient(90deg,var(--border),transparent);margin:56px 0}
+    .code-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:18px 0;font-family:'JetBrains Mono',monospace}
+    .code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--card2);border-bottom:1px solid var(--border2)}
+    .code-lang{font-size:.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--lime)}
+    .code-file{font-size:.7rem;color:var(--muted)}
+    .code-dots{display:flex;gap:5px}
+    .code-dots span{width:8px;height:8px;border-radius:50%}
+    .code-dots .d1{background:#FF5F57}
+    .code-dots .d2{background:#FEBC2E}
+    .code-dots .d3{background:var(--lime)}
+    pre{padding:20px;overflow-x:auto;font-size:.85rem;line-height:1.75}
+    code{font-family:'JetBrains Mono',monospace}
+    .kw{color:#C77DFF}
+    .ty{color:#5CC8FF}
+    .st{color:#A8E63D}
+    .cm{color:#4D6B30}
+    .fn{color:#FFD166}
+    .nu{color:#FF7B5C}
+    .op{color:#A8E63D}
+    .pr{color:#F7F3E8}
+    .pu{color:#9DAA85}
+    .info-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:18px 0}
+    .info-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px}
+    .info-card .ic-head{display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:700;color:var(--lime);margin-bottom:8px}
+    .info-card p{font-size:.82rem;margin-bottom:0}
+    .callout{border-left:3px solid var(--lime);background:var(--lime-dim);border-radius:0 10px 10px 0;padding:14px 18px;margin:18px 0;font-size:.88rem;color:var(--cream)}
+    .callout .callout-title{font-weight:700;color:var(--lime);font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+    .callout.warn{border-color:var(--amber);background:rgba(244,185,66,.08)}
+    .callout.warn .callout-title{color:var(--amber)}
+    .compare-table{width:100%;border-collapse:collapse;font-size:.85rem;margin:18px 0}
+    .compare-table th{background:var(--card2);color:var(--lime);font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:10px 16px;text-align:left;border-bottom:1px solid var(--border)}
+    .compare-table td{padding:10px 16px;color:var(--muted);border-bottom:1px solid var(--border2);vertical-align:top}
+    .compare-table tr:last-child td{border-bottom:none}
+    .compare-table td:first-child{color:var(--cream);font-weight:500}
+    .compare-table code{background:var(--bg);border:1px solid var(--border2);padding:2px 6px;border-radius:4px;font-size:.8rem;color:var(--lime-glow)}
+    .concept{display:inline-block;background:var(--lime-dim);border:1px solid var(--border);border-radius:6px;padding:1px 8px;font-size:.78rem;font-weight:700;color:var(--lime);font-family:'JetBrains Mono',monospace}
+    .section-label{font-size:.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--lime);margin:24px 0 8px}
+    #back-top{position:fixed;bottom:28px;right:24px;width:42px;height:42px;border-radius:50%;background:var(--lime);color:var(--bg);border:none;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px rgba(168,230,61,.5);transition:all .2s;opacity:0;transform:translateY(20px);z-index:500}
+    #back-top.show{opacity:1;transform:translateY(0)}
+    #back-top:hover{transform:translateY(-3px) scale(1.08)}
+    footer{position:relative;z-index:1;text-align:center;padding:28px;border-top:1px solid var(--border);color:var(--muted);font-size:.8rem}
+    footer a{color:var(--lime);text-decoration:none}
+    p code,li code{background:var(--card);border:1px solid var(--border2);padding:1px 6px;border-radius:4px;font-size:.82em;color:var(--lime-glow)}
+    .flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:16px 0;font-size:.85rem}
+    .flow-box{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--cream);font-weight:600}
+    .flow-arr{color:var(--lime);font-size:1.1rem}
+    .fade-in{opacity:0;transform:translateY(20px);transition:opacity .5s ease,transform .5s ease}
+    .fade-in.visible{opacity:1;transform:translateY(0)}
+  </style>
+</head>
+<body>
+<div id="progress-bar"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">Iron<span>Ledger</span>&nbsp;<span class="nav-pill">TypeScript Guide</span></a>
+    <ul class="nav-chapters">
+      <li><a href="#js-vs-ts">JS vs TS</a></li>
+      <li><a href="#interfaces">Interfaces</a></li>
+      <li><a href="#union-types">Union Types</a></li>
+      <li><a href="#generics">Generics</a></li>
+      <li><a href="#react-fc">React + TS</a></li>
+      <li><a href="#utility-types">Utilities</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="hero fade-in">
+  <div class="hero-badge"><span class="dot"></span> Iron Ledger — Frontend Explained</div>
+  <h1>TypeScript <span class="hl">Concepts</span><br>Used In This Project</h1>
+  <p class="hero-sub">Every TypeScript idea used in the Iron Ledger workout tracker — shown with the <strong>exact code from the project</strong>. No theory fluff. Real examples, plain English explanations.</p>
+  <div class="hero-chips">
+    <a href="#js-vs-ts" class="chip">🥊 JS vs TS</a>
+    <a href="#interfaces" class="chip">📐 Interfaces</a>
+    <a href="#type-alias" class="chip">🏷️ Type Aliases</a>
+    <a href="#union-types" class="chip">🔀 Union Types</a>
+    <a href="#optional" class="chip">❓ Optional &amp; Nullable</a>
+    <a href="#generics" class="chip">🔬 Generics</a>
+    <a href="#react-fc" class="chip">⚛️ React.FC</a>
+    <a href="#custom-hooks" class="chip">🪝 Custom Hooks</a>
+    <a href="#record-type" class="chip">📦 Record Type</a>
+    <a href="#utility-types" class="chip">🛠️ Utility Types</a>
+    <a href="#axios-generics" class="chip">🌐 Axios Generics</a>
+  </div>
+</section>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-title">Chapters</div>
+    <ul>
+      <li><a href="#js-vs-ts"><span class="num">00</span>JS vs TS</a></li>
+      <li><a href="#interfaces"><span class="num">01</span>Interfaces</a></li>
+      <li><a href="#type-alias"><span class="num">02</span>Type Aliases</a></li>
+      <li><a href="#union-types"><span class="num">03</span>Union Types</a></li>
+      <li><a href="#optional"><span class="num">04</span>Optional &amp; Nullable</a></li>
+      <li><a href="#generics"><span class="num">05</span>Generics</a></li>
+      <li><a href="#react-fc"><span class="num">06</span>React.FC &amp; Props</a></li>
+      <li><a href="#context"><span class="num">07</span>Context API</a></li>
+      <li><a href="#custom-hooks"><span class="num">08</span>Custom Hooks</a></li>
+      <li><a href="#record-type"><span class="num">09</span>Record&lt;&gt; Type</a></li>
+      <li><a href="#utility-types"><span class="num">10</span>Utility Types</a></li>
+      <li><a href="#axios-generics"><span class="num">11</span>Axios Generics</a></li>
+      <li><a href="#arrow-fns"><span class="num">12</span>Typed Arrow Fns</a></li>
+    </ul>
+  </aside>
+
+  <main class="content">
+
+    <!-- 00 JS VS TS -->
+    <section class="chapter fade-in" id="js-vs-ts">
+      <div class="chapter-header">
+        <span class="chapter-num">00</span>
+        <h2>JS vs TS</h2>
+        <span class="chapter-tag tag-pattern">Concept</span>
+      </div>
+      <p>JavaScript is dynamically typed, meaning types are checked at <strong>runtime</strong>. TypeScript is a superset of JavaScript that adds <strong>static typing</strong>, meaning types are checked at <strong>compile time</strong> (as you write the code). This catches bugs before they even happen.</p>
+      <div class="info-row">
+        <div class="info-card">
+          <div class="ic-head">🟡 JavaScript</div>
+          <p>You find out a variable is undefined when the user clicks a button and the app crashes.</p>
+        </div>
+        <div class="info-card">
+          <div class="ic-head">🔵 TypeScript</div>
+          <p>Your editor yells at you with a red squiggly line the moment you type the wrong thing.</p>
+        </div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">Comparison</span>
+          <span class="code-file">Example</span>
+        </div>
+        <pre><code><span class="cm">// JavaScript (valid but dangerous)</span>
+<span class="kw">function</span> <span class="fn">add</span><span class="pu">(</span><span class="pr">a</span><span class="pu">,</span> <span class="pr">b</span><span class="pu">)</span> <span class="pu">{</span> <span class="kw">return</span> <span class="pr">a</span> <span class="op">+</span> <span class="pr">b</span><span class="pu">;</span> <span class="pu">}</span>
+<span class="fn">add</span><span class="pu">(</span><span class="nu">5</span><span class="pu">,</span> <span class="st">"10"</span><span class="pu">);</span> <span class="cm">// Returns "510" (string concatenation)</span>
+
+<span class="cm">// TypeScript (safe)</span>
+<span class="kw">function</span> <span class="fn">add</span><span class="pu">(</span><span class="pr">a</span><span class="op">:</span> <span class="ty">number</span><span class="pu">,</span> <span class="pr">b</span><span class="op">:</span> <span class="ty">number</span><span class="pu">)</span> <span class="pu">{</span> <span class="kw">return</span> <span class="pr">a</span> <span class="op">+</span> <span class="pr">b</span><span class="pu">;</span> <span class="pu">}</span>
+<span class="fn">add</span><span class="pu">(</span><span class="nu">5</span><span class="pu">,</span> <span class="st">"10"</span><span class="pu">);</span> <span class="cm">// ❌ Error: Argument of type 'string' is not assignable to type 'number'</span></code></pre>
+      </div>
+      
+      <table class="compare-table">
+        <tr><th>Feature</th><th>JavaScript</th><th>TypeScript</th></tr>
+        <tr><td>Typing</td><td>Dynamic (Checked at runtime)</td><td>Static (Checked at compile-time)</td></tr>
+        <tr><td>Autocomplete</td><td>Basic / Guessed</td><td>Rich, exact, and context-aware</td></tr>
+        <tr><td>Execution</td><td>Runs directly in the browser/Node</td><td>Must be compiled to JS first</td></tr>
+        <tr><td>Code Maintenance</td><td>Harder on large codebases</td><td>Much easier to refactor safely</td></tr>
+        <tr><td>Custom Data Shapes</td><td>Implicit</td><td>Explicit (via <code>interface</code> / <code>type</code>)</td></tr>
+      </table>
+
+      <div class="section-label">When to use which?</div>
+      <div class="info-row">
+        <div class="info-card">
+          <div class="ic-head">🟡 Use JavaScript when...</div>
+          <p>You are building a quick prototype, a tiny script, or learning the basics of web development. It's fast to set up and requires zero build steps.</p>
+        </div>
+        <div class="info-card">
+          <div class="ic-head">🔵 Use TypeScript when...</div>
+          <p>You are building a production app, working on a team, or dealing with complex data (like this workout tracker). The initial setup pays off by preventing countless bugs.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 01 INTERFACES -->
+    <section class="chapter fade-in" id="interfaces">
+      <div class="chapter-header">
+        <span class="chapter-num">01</span>
+        <h2>Interfaces</h2>
+        <span class="chapter-tag tag-type">Core Type</span>
+      </div>
+      <p>An <strong>interface</strong> is a contract that says <em>"this object must have exactly these fields with exactly these types."</em> Think of it as a blueprint. TypeScript checks every object you create against the blueprint and warns you if something is wrong.</p>
+      <div class="callout">
+        <div class="callout-title">💡 Plain English</div>
+        Imagine filling a gym registration form — Name, Weight, Reps. An interface is that form. If you try to submit it with <code>naam</code> instead of <code>name</code>, TypeScript rejects it <em>before the app even runs</em>.
+      </div>
+      <div class="section-label">From src/types/index.ts</div>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">TypeScript</span>
+          <span class="code-file">src/types/index.ts</span>
+        </div>
+        <pre><code><span class="cm">// Describes a gym exercise object</span>
+<span class="kw">export interface</span> <span class="ty">Exercise</span> <span class="pu">{</span>
+  <span class="pr">id</span><span class="op">:</span> <span class="ty">number</span><span class="pu">;</span>
+  <span class="pr">name</span><span class="op">:</span> <span class="ty">string</span><span class="pu">;</span>
+  <span class="pr">category</span><span class="op">:</span> <span class="ty">string</span><span class="pu">;</span>
+  <span class="pr">isCustom</span><span class="op">:</span> <span class="ty">boolean</span><span class="pu">;</span>
+  <span class="pr">notes</span><span class="op">:</span> <span class="ty">string</span><span class="pu">;</span>
+<span class="pu">}</span>
+
+<span class="cm">// Describes one logged set — notice Exercise is NESTED inside!</span>
+<span class="kw">export interface</span> <span class="ty">LoggedSet</span> <span class="pu">{</span>
+  <span class="pr">id</span><span class="op">:</span> <span class="ty">number</span><span class="pu">;</span>
+  <span class="pr">exercise</span><span class="op">:</span> <span class="ty">Exercise</span><span class="pu">;</span>  <span class="cm">// another interface used as a type</span>
+  <span class="pr">weight</span><span class="op">:</span> <span class="ty">number</span><span class="pu">;</span>
+  <span class="pr">reps</span><span class="op">:</span> <span class="ty">number</span><span class="pu">;</span>
+  <span class="pr">rpe</span><span class="op">:</span> <span class="ty">number</span><span class="pu">;</span>
+  <span class="pr">isTopSet</span><span class="op">:</span> <span class="ty">boolean</span><span class="pu">;</span>
+<span class="pu">}</span></code></pre>
+      </div>
+      <div class="info-row">
+        <div class="info-card">
+          <div class="ic-head">🔴 Without TypeScript</div>
+          <p>You could write <code>{ nam: 'Bench', wieght: 80 }</code> and only discover the typo when the app crashes at runtime.</p>
+        </div>
+        <div class="info-card">
+          <div class="ic-head">🟢 With Interface</div>
+          <p>TypeScript highlights the error <em>immediately</em> — a red underline appears in your editor before you even save.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 02 TYPE ALIASES -->
+    <section class="chapter fade-in" id="type-alias">
+      <div class="chapter-header">
+        <span class="chapter-num">02</span>
+        <h2>Type Aliases</h2>
+        <span class="chapter-tag tag-type">Core Type</span>
+      </div>
+      <p>A <strong>type alias</strong> gives a name to any type including primitive combinations and unions. Uses the keyword <code>type</code> instead of <code>interface</code>.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">TypeScript</span>
+          <span class="code-file">src/types/index.ts</span>
+        </div>
+        <pre><code><span class="cm">// A type alias — gives a name to a union of string literals</span>
+<span class="kw">export type</span> <span class="ty">StrengthGrade</span> <span class="op">=</span> <span class="st">'PLATINUM'</span> <span class="op">|</span> <span class="st">'GOLD'</span> <span class="op">|</span> <span class="st">'SILVER'</span> <span class="op">|</span> <span class="st">'BASELINE'</span><span class="pu">;</span></code></pre>
+      </div>
+      <table class="compare-table">
+        <tr><th>Feature</th><th>interface</th><th>type</th></tr>
+        <tr><td>Object shapes</td><td>✅ Perfect for this</td><td>✅ Works too</td></tr>
+        <tr><td>Union types</td><td>❌ Can't do this</td><td>✅ Primary use case</td></tr>
+        <tr><td>Extends</td><td>✅ <code>extends</code> keyword</td><td>✅ Intersection <code>&amp;</code></td></tr>
+        <tr><td>Re-openable</td><td>✅ Can merge</td><td>❌ Cannot</td></tr>
+      </table>
+      <div class="callout">
+        <div class="callout-title">Rule of Thumb for This Project</div>
+        Use <code>interface</code> for objects (like <code>Exercise</code>, <code>LoggedSet</code>). Use <code>type</code> for unions of specific string values (like <code>StrengthGrade</code>).
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 03 UNION TYPES -->
+    <section class="chapter fade-in" id="union-types">
+      <div class="chapter-header">
+        <span class="chapter-num">03</span>
+        <h2>Union Types</h2>
+        <span class="chapter-tag tag-type">Core Type</span>
+      </div>
+      <p>A <strong>union type</strong> says <em>"this value can be ONE of these types."</em> Written with a <code>|</code> pipe between each option.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">TypeScript</span>
+          <span class="code-file">src/types/index.ts</span>
+        </div>
+        <pre><code><span class="cm">// 1. Union of STRING LITERALS — only these four words allowed</span>
+<span class="kw">type</span> <span class="ty">StrengthGrade</span> <span class="op">=</span> <span class="st">'PLATINUM'</span> <span class="op">|</span> <span class="st">'GOLD'</span> <span class="op">|</span> <span class="st">'SILVER'</span> <span class="op">|</span> <span class="st">'BASELINE'</span><span class="pu">;</span>
+
+<span class="cm">// Writing 'DIAMOND' would cause an error! ❌</span>
+<span class="kw">const</span> <span class="pr">grade</span><span class="op">:</span> <span class="ty">StrengthGrade</span> <span class="op">=</span> <span class="st">'DIAMOND'</span><span class="pu">;</span>
+<span class="cm">// Error: Type '"DIAMOND"' is not assignable to type 'StrengthGrade'</span>
+
+<span class="cm">// 2. Union with PRIMITIVES — value or null</span>
+<span class="pr">rir</span><span class="op">:</span> <span class="ty">number</span> <span class="op">|</span> <span class="ty">null</span><span class="pu">;</span>
+
+<span class="cm">// 3. Union status literals (from NextSessionTarget)</span>
+<span class="pr">status</span><span class="op">:</span> <span class="st">'PENDING'</span> <span class="op">|</span> <span class="st">'COMPLETED'</span> <span class="op">|</span> <span class="st">'SKIPPED'</span><span class="pu">;</span></code></pre>
+      </div>
+      <div class="flow">
+        <div class="flow-box">You type <code>'DIAMOND'</code></div>
+        <span class="flow-arr">→</span>
+        <div class="flow-box">TS checks union</div>
+        <span class="flow-arr">→</span>
+        <div class="flow-box" style="border-color:var(--coral);color:var(--coral)">❌ Error before runtime</div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 04 OPTIONAL & NULLABLE -->
+    <section class="chapter fade-in" id="optional">
+      <div class="chapter-header">
+        <span class="chapter-num">04</span>
+        <h2>Optional &amp; Nullable Fields</h2>
+        <span class="chapter-tag tag-type">Core Type</span>
+      </div>
+      <p>Not every field is always present. TypeScript gives you two ways to express this:</p>
+      <table class="compare-table">
+        <tr><th>Syntax</th><th>Meaning</th><th>Example from project</th></tr>
+        <tr><td><code>field?: Type</code></td><td>Property may be missing entirely</td><td><code>exerciseId?: number</code></td></tr>
+        <tr><td><code>field: Type | null</code></td><td>Always present but value may be null</td><td><code>rir: number | null</code></td></tr>
+        <tr><td><code>field?: Type | null</code></td><td>May be absent OR null</td><td><code>rpe?: number | null</code></td></tr>
+      </table>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">TypeScript</span>
+          <span class="code-file">src/types/index.ts — SetLogRequest</span>
+        </div>
+        <pre><code><span class="kw">export interface</span> <span class="ty">SetLogRequest</span> <span class="pu">{</span>
+  <span class="pr">exerciseId</span><span class="op">?:</span> <span class="ty">number</span><span class="pu">;</span>        <span class="cm">// optional — may be missing</span>
+  <span class="pr">exerciseName</span><span class="op">?:</span> <span class="ty">string</span><span class="pu">;</span>      <span class="cm">// optional — may be missing</span>
+  <span class="pr">sessionId</span><span class="op">:</span> <span class="ty">number</span><span class="pu">;</span>          <span class="cm">// required — must always be there</span>
+  <span class="pr">weight</span><span class="op">:</span> <span class="ty">number</span><span class="pu">;</span>             <span class="cm">// required</span>
+  <span class="pr">rpe</span><span class="op">?:</span> <span class="ty">number</span> <span class="op">|</span> <span class="ty">null</span><span class="pu">;</span>        <span class="cm">// optional AND nullable</span>
+  <span class="pr">rir</span><span class="op">?:</span> <span class="ty">number</span> <span class="op">|</span> <span class="ty">null</span><span class="pu">;</span>        <span class="cm">// optional AND nullable</span>
+  <span class="pr">setNote</span><span class="op">?:</span> <span class="ty">string</span> <span class="op">|</span> <span class="ty">null</span><span class="pu">;</span>   <span class="cm">// optional AND nullable</span>
+  <span class="pr">isTopSet</span><span class="op">:</span> <span class="ty">boolean</span><span class="pu">;</span>          <span class="cm">// required</span>
+<span class="pu">}</span></code></pre>
+      </div>
+      <div class="callout">
+        <div class="callout-title">💡 Why both optional AND nullable?</div>
+        <code>rpe?: number | null</code> means the user might not have submitted RPE (key missing), OR they cleared it to null. The backend can distinguish these two!
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 05 GENERICS -->
+    <section class="chapter fade-in" id="generics">
+      <div class="chapter-header">
+        <span class="chapter-num">05</span>
+        <h2>Generics</h2>
+        <span class="chapter-tag tag-generic">Advanced</span>
+      </div>
+      <p>Generics let you write <strong>reusable code that works with different types</strong> while staying type-safe. Think of <code>&lt;T&gt;</code> as a type variable — a placeholder that gets filled when you use it.</p>
+      <div class="callout">
+        <div class="callout-title">💡 Analogy</div>
+        A lunch box is a container. <code>Box&lt;Rice&gt;</code> or <code>Box&lt;Pasta&gt;</code> — the shape is the same but you always know what's inside.
+      </div>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">TypeScript</span>
+          <span class="code-file">src/context/AuthContext.tsx</span>
+        </div>
+        <pre><code><span class="cm">// useState&lt;T&gt; — T is the generic type slot</span>
+<span class="kw">const</span> <span class="pu">[</span><span class="pr">token</span><span class="pu">,</span> <span class="pr">setToken</span><span class="pu">]</span> <span class="op">=</span> <span class="fn">useState</span><span class="op">&lt;</span><span class="ty">string</span> <span class="op">|</span> <span class="ty">null</span><span class="op">&gt;</span><span class="pu">(</span><span class="kw">null</span><span class="pu">);</span>
+<span class="cm">//                            ↑ T = "string | null"
+//  Calling setToken(42) would now be an error!</span>
+
+<span class="kw">const</span> <span class="pu">[</span><span class="pr">user</span><span class="pu">,</span> <span class="pr">setUser</span><span class="pu">]</span> <span class="op">=</span> <span class="fn">useState</span><span class="op">&lt;</span><span class="ty">User</span> <span class="op">|</span> <span class="ty">null</span><span class="op">&gt;</span><span class="pu">(</span><span class="kw">null</span><span class="pu">);</span>
+<span class="cm">//                            ↑ T = "User | null"</span>
+
+<span class="cm">// createContext&lt;T&gt; — tells React what the context value looks like</span>
+<span class="kw">const</span> <span class="pr">AuthContext</span> <span class="op">=</span> <span class="fn">createContext</span><span class="op">&lt;</span><span class="ty">AuthContextType</span> <span class="op">|</span> <span class="ty">undefined</span><span class="op">&gt;</span><span class="pu">(</span><span class="kw">undefined</span><span class="pu">);</span>
+<span class="cm">//                              ↑ Starts as undefined, becomes AuthContextType once Provider wraps app</span></code></pre>
+      </div>
+      <div class="flow">
+        <div class="flow-box">Write <code>useState&lt;T&gt;</code></div>
+        <span class="flow-arr">→</span>
+        <div class="flow-box">TypeScript fills in T</div>
+        <span class="flow-arr">→</span>
+        <div class="flow-box">All usages are checked</div>
+        <span class="flow-arr">→</span>
+        <div class="flow-box" style="border-color:var(--lime);color:var(--lime)">✅ Safe code</div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 06 REACT.FC -->
+    <section class="chapter fade-in" id="react-fc">
+      <div class="chapter-header">
+        <span class="chapter-num">06</span>
+        <h2>React.FC &amp; Typed Props</h2>
+        <span class="chapter-tag tag-react">React</span>
+      </div>
+      <p><code>React.FC</code> = <strong>React Functional Component</strong>. The generic parameter <code>&lt;{ ... }&gt;</code> declares what props the component accepts.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">TypeScript</span>
+          <span class="code-file">src/components/ProtectedRoute.tsx</span>
+        </div>
+        <pre><code><span class="cm">// React.FC&lt;Props&gt; — typed functional component</span>
+<span class="kw">const</span> <span class="fn">ProtectedRoute</span><span class="op">:</span> <span class="ty">React</span><span class="pu">.</span><span class="ty">FC</span><span class="op">&lt;</span><span class="pu">{</span> <span class="pr">children</span><span class="op">:</span> <span class="ty">React</span><span class="pu">.</span><span class="ty">ReactNode</span> <span class="pu">}</span><span class="op">&gt;</span> <span class="op">=</span> <span class="pu">({</span> <span class="pr">children</span> <span class="pu">})</span> <span class="op">=&gt;</span> <span class="pu">{</span>
+<span class="cm">//                  ↑ Generic says: accepts one prop called `children`
+//                    which must be React.ReactNode (any valid JSX)</span>
+  <span class="kw">const</span> <span class="pu">{</span> <span class="pr">token</span> <span class="pu">}</span> <span class="op">=</span> <span class="fn">useAuth</span><span class="pu">();</span>
+  <span class="kw">if</span> <span class="pu">(!</span><span class="pr">token</span><span class="pu">)</span> <span class="kw">return</span> <span class="op">&lt;</span><span class="ty">Navigate</span> <span class="pr">to</span><span class="op">=</span><span class="st">"/login"</span> <span class="pr">replace</span> <span class="op">/&gt;</span><span class="pu">;</span>
+  <span class="kw">return</span> <span class="op">&lt;&gt;</span><span class="pu">{</span><span class="pr">children</span><span class="pu">}</span><span class="op">&lt;/&gt;</span><span class="pu">;</span>
+<span class="pu">};</span>
+
+<span class="cm">// AuthProvider — same pattern, children comes from ReactNode import</span>
+<span class="kw">export const</span> <span class="fn">AuthProvider</span><span class="op">:</span> <span class="ty">React</span><span class="pu">.</span><span class="ty">FC</span><span class="op">&lt;</span><span class="pu">{</span> <span class="pr">children</span><span class="op">:</span> <span class="ty">ReactNode</span> <span class="pu">}</span><span class="op">&gt;</span> <span class="op">=</span> <span class="pu">({</span> <span class="pr">children</span> <span class="pu">})</span> <span class="op">=&gt;</span> <span class="pu">{</span>
+  <span class="cm">// ...state and functions</span>
+  <span class="kw">return</span> <span class="pu">(</span>
+    <span class="op">&lt;</span><span class="ty">AuthContext</span><span class="pu">.</span><span class="ty">Provider</span> <span class="pr">value</span><span class="op">=</span><span class="pu">{{</span> <span class="pr">token</span><span class="pu">,</span> <span class="pr">user</span><span class="pu">,</span> <span class="pr">login</span><span class="pu">,</span> <span class="pr">logout</span> <span class="pu">}}</span><span class="op">&gt;</span>
+      <span class="pu">{</span><span class="pr">children</span><span class="pu">}</span>
+    <span class="op">&lt;/</span><span class="ty">AuthContext</span><span class="pu">.</span><span class="ty">Provider</span><span class="op">&gt;</span>
+  <span class="pu">);</span>
+<span class="pu">};</span></code></pre>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 07 CONTEXT API -->
+    <section class="chapter fade-in" id="context">
+      <div class="chapter-header">
+        <span class="chapter-num">07</span>
+        <h2>Context API with TypeScript</h2>
+        <span class="chapter-tag tag-react">React</span>
+      </div>
+      <p>React Context lets you share state globally without prop drilling. TypeScript makes it fully type-safe via interfaces.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">TypeScript</span>
+          <span class="code-file">src/context/AuthContext.tsx</span>
+        </div>
+        <pre><code><span class="cm">// STEP 1: Define the shape</span>
+<span class="kw">interface</span> <span class="ty">AuthContextType</span> <span class="pu">{</span>
+  <span class="pr">token</span><span class="op">:</span>   <span class="ty">string</span> <span class="op">|</span> <span class="ty">null</span><span class="pu">;</span>
+  <span class="pr">user</span><span class="op">:</span>    <span class="ty">User</span> <span class="op">|</span> <span class="ty">null</span><span class="pu">;</span>
+  <span class="pr">login</span><span class="op">:</span>   <span class="pu">(</span><span class="pr">token</span><span class="op">:</span> <span class="ty">string</span><span class="pu">,</span> <span class="pr">username</span><span class="op">:</span> <span class="ty">string</span><span class="pu">)</span> <span class="op">=&gt;</span> <span class="ty">void</span><span class="pu">;</span>  <span class="cm">// function type!</span>
+  <span class="pr">logout</span><span class="op">:</span>  <span class="pu">()</span> <span class="op">=&gt;</span> <span class="ty">void</span><span class="pu">;</span>
+<span class="pu">}</span>
+
+<span class="cm">// STEP 2: Create context — starts undefined, filled by Provider</span>
+<span class="kw">const</span> <span class="pr">AuthContext</span> <span class="op">=</span> <span class="fn">createContext</span><span class="op">&lt;</span><span class="ty">AuthContextType</span> <span class="op">|</span> <span class="ty">undefined</span><span class="op">&gt;</span><span class="pu">(</span><span class="kw">undefined</span><span class="pu">);</span>
+
+<span class="cm">// STEP 3: Wrap your app — now all children have access</span>
+<span class="pu">&lt;</span><span class="ty">AuthProvider</span><span class="pu">&gt;</span>
+  <span class="pu">&lt;</span><span class="ty">AppContent</span> <span class="op">/&gt;</span>    <span class="cm">// can call useAuth() anywhere in here</span>
+<span class="pu">&lt;/</span><span class="ty">AuthProvider</span><span class="pu">&gt;</span></code></pre>
+      </div>
+      <div class="info-row">
+        <div class="info-card">
+          <div class="ic-head">📍 In App.tsx</div>
+          <p><code>&lt;AuthProvider&gt;</code> wraps the whole app, making auth data available everywhere inside.</p>
+        </div>
+        <div class="info-card">
+          <div class="ic-head">🪝 In any component</div>
+          <p>Call <code>useAuth()</code> to get <code>token</code>, <code>user</code>, <code>login</code>, <code>logout</code> — all fully typed!</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 08 CUSTOM HOOKS -->
+    <section class="chapter fade-in" id="custom-hooks">
+      <div class="chapter-header">
+        <span class="chapter-num">08</span>
+        <h2>Custom Hooks with TypeScript</h2>
+        <span class="chapter-tag tag-react">React</span>
+      </div>
+      <p>A <strong>custom hook</strong> is a function starting with <code>use</code> that can call other React hooks. TypeScript defines exactly what it returns.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">TypeScript</span>
+          <span class="code-file">src/context/AuthContext.tsx</span>
+        </div>
+        <pre><code><span class="cm">// useAuth — custom hook returning the auth context</span>
+<span class="kw">export const</span> <span class="fn">useAuth</span> <span class="op">=</span> <span class="pu">()</span> <span class="op">=&gt;</span> <span class="pu">{</span>
+  <span class="kw">const</span> <span class="pr">context</span> <span class="op">=</span> <span class="fn">useContext</span><span class="pu">(</span><span class="pr">AuthContext</span><span class="pu">);</span>
+
+  <span class="cm">// Type guard — ensures hook is used inside AuthProvider</span>
+  <span class="kw">if</span> <span class="pu">(</span><span class="pr">context</span> <span class="op">===</span> <span class="kw">undefined</span><span class="pu">)</span> <span class="pu">{</span>
+    <span class="kw">throw new</span> <span class="ty">Error</span><span class="pu">(</span><span class="st">'useAuth must be used within an AuthProvider'</span><span class="pu">);</span>
+  <span class="pu">}</span>
+  <span class="cm">// After the throw, TS KNOWS context is AuthContextType (not undefined)</span>
+  <span class="cm">// This is called TYPE NARROWING</span>
+
+  <span class="kw">return</span> <span class="pr">context</span><span class="pu">;</span>
+<span class="pu">};</span>
+
+<span class="cm">// Usage — token and logout are fully typed</span>
+<span class="kw">const</span> <span class="pu">{</span> <span class="pr">token</span><span class="pu">,</span> <span class="pr">logout</span> <span class="pu">}</span> <span class="op">=</span> <span class="fn">useAuth</span><span class="pu">();</span>
+<span class="cm">//     ↑ string | null       ↑ () => void</span></code></pre>
+      </div>
+      <div class="callout">
+        <div class="callout-title">🔑 Type Narrowing</div>
+        After the <code>if (context === undefined) throw</code>, TypeScript <em>narrows</em> the type — it now knows <code>context</code> is <code>AuthContextType</code> (not undefined). The error also helps you debug fast in development.
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 09 RECORD TYPE -->
+    <section class="chapter fade-in" id="record-type">
+      <div class="chapter-header">
+        <span class="chapter-num">09</span>
+        <h2>Record&lt;K, V&gt; Type</h2>
+        <span class="chapter-tag tag-generic">Advanced</span>
+      </div>
+      <p><code>Record&lt;Keys, Values&gt;</code> creates an object type where every key is type K and every value is type V. It ensures you handle every possible key — no case forgotten.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">TypeScript</span>
+          <span class="code-file">src/components/GradeBadge.tsx</span>
+        </div>
+        <pre><code><span class="kw">import type</span> <span class="pu">{</span> <span class="ty">StrengthGrade</span> <span class="pu">}</span> <span class="kw">from</span> <span class="st">'../types'</span><span class="pu">;</span>
+
+<span class="cm">// Record&lt;StrengthGrade, { bg, text, glow }&gt;
+//  Every grade MUST have a style entry.
+//  Adding 'DIAMOND' to StrengthGrade but forgetting here = ERROR!</span>
+<span class="kw">const</span> <span class="pr">gradeStyles</span><span class="op">:</span> <span class="ty">Record</span><span class="op">&lt;</span><span class="ty">StrengthGrade</span><span class="pu">,</span> <span class="pu">{</span> <span class="pr">bg</span><span class="op">:</span> <span class="ty">string</span><span class="pu">;</span> <span class="pr">text</span><span class="op">:</span> <span class="ty">string</span><span class="pu">;</span> <span class="pr">glow</span><span class="op">:</span> <span class="ty">string</span> <span class="pu">}</span><span class="op">&gt;</span> <span class="op">=</span> <span class="pu">{</span>
+  <span class="st">PLATINUM</span><span class="op">:</span> <span class="pu">{</span> <span class="pr">bg</span><span class="op">:</span> <span class="st">'linear-gradient(135deg,#00f5a0,#00d9f5)'</span><span class="pu">,</span> <span class="pr">text</span><span class="op">:</span> <span class="st">'#08090d'</span><span class="pu">,</span> <span class="pr">glow</span><span class="op">:</span> <span class="st">'...'</span> <span class="pu">},</span>
+  <span class="st">GOLD</span><span class="op">:</span>     <span class="pu">{</span> <span class="pr">bg</span><span class="op">:</span> <span class="st">'linear-gradient(135deg,#ffd166,#ffab00)'</span><span class="pu">,</span> <span class="pr">text</span><span class="op">:</span> <span class="st">'#08090d'</span><span class="pu">,</span> <span class="pr">glow</span><span class="op">:</span> <span class="st">'...'</span> <span class="pu">},</span>
+  <span class="st">SILVER</span><span class="op">:</span>   <span class="pu">{</span> <span class="pr">bg</span><span class="op">:</span> <span class="st">'linear-gradient(135deg,#a0aec0,#718096)'</span><span class="pu">,</span> <span class="pr">text</span><span class="op">:</span> <span class="st">'#08090d'</span><span class="pu">,</span> <span class="pr">glow</span><span class="op">:</span> <span class="st">'...'</span> <span class="pu">},</span>
+  <span class="st">BASELINE</span><span class="op">:</span> <span class="pu">{</span> <span class="pr">bg</span><span class="op">:</span> <span class="st">'var(--color-surface-raised)'</span><span class="pu">,</span> <span class="pr">text</span><span class="op">:</span> <span class="st">'...'</span><span class="pu">,</span> <span class="pr">glow</span><span class="op">:</span> <span class="st">'none'</span> <span class="pu">},</span>
+<span class="pu">};</span>
+
+<span class="cm">// Usage — always type-safe lookup</span>
+<span class="kw">const</span> <span class="pr">style</span> <span class="op">=</span> <span class="pr">gradeStyles</span><span class="pu">[</span><span class="pr">grade</span><span class="pu">];</span></code></pre>
+      </div>
+      <div class="callout warn">
+        <div class="callout-title">⚠️ Without Record</div>
+        Using <code>const gradeStyles: any = {...}</code> loses all safety. A new grade could be added to the union and the style mapping would be silently missing — until the UI breaks in production.
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 10 UTILITY TYPES -->
+    <section class="chapter fade-in" id="utility-types">
+      <div class="chapter-header">
+        <span class="chapter-num">10</span>
+        <h2>Utility Types</h2>
+        <span class="chapter-tag tag-util">Built-in TS</span>
+      </div>
+      <p>TypeScript ships with built-in <strong>utility types</strong> — helper generics that transform existing types.</p>
+      <table class="compare-table">
+        <tr><th>Utility Type</th><th>What it does</th><th>Where used in project</th></tr>
+        <tr><td><code>Partial&lt;T&gt;</code></td><td>Makes every field of T optional</td><td><code>createExercise(ex: Partial&lt;Exercise&gt;)</code></td></tr>
+        <tr><td><code>Record&lt;K,V&gt;</code></td><td>Object type with keys K and values V</td><td><code>gradeStyles: Record&lt;StrengthGrade,{...}&gt;</code></td></tr>
+        <tr><td><code>Record&lt;string, unknown&gt;</code></td><td>Safe "any object" with string keys</td><td><code>patchSession(id, data: Record&lt;string, unknown&gt;)</code></td></tr>
+      </table>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">TypeScript</span>
+          <span class="code-file">src/api/api.ts</span>
+        </div>
+        <pre><code><span class="cm">// Partial&lt;Exercise&gt; = { id?: number; name?: string; ... }
+//   All fields become optional — perfect for CREATE requests
+//   where you don't have an id yet!</span>
+<span class="kw">export const</span> <span class="fn">createExercise</span> <span class="op">=</span> <span class="pu">(</span><span class="pr">ex</span><span class="op">:</span> <span class="ty">Partial</span><span class="op">&lt;</span><span class="ty">Exercise</span><span class="op">&gt;</span><span class="pu">)</span> <span class="op">=&gt;</span>
+  <span class="pr">API</span><span class="pu">.</span><span class="fn">post</span><span class="op">&lt;</span><span class="ty">Exercise</span><span class="op">&gt;</span><span class="pu">(</span><span class="st">'/exercises'</span><span class="pu">,</span> <span class="pr">ex</span><span class="pu">).</span><span class="fn">then</span><span class="pu">(</span><span class="pr">r</span> <span class="op">=&gt;</span> <span class="pr">r</span><span class="pu">.</span><span class="pr">data</span><span class="pu">);</span>
+
+<span class="cm">// Record&lt;string, unknown&gt; — safer than any for a flexible patch body</span>
+<span class="kw">export const</span> <span class="fn">patchSession</span> <span class="op">=</span> <span class="pu">(</span><span class="pr">id</span><span class="op">:</span> <span class="ty">number</span><span class="pu">,</span> <span class="pr">data</span><span class="op">:</span> <span class="ty">Record</span><span class="op">&lt;</span><span class="ty">string</span><span class="pu">,</span> <span class="ty">unknown</span><span class="op">&gt;</span><span class="pu">)</span> <span class="op">=&gt;</span>
+  <span class="pr">API</span><span class="pu">.</span><span class="fn">put</span><span class="op">&lt;</span><span class="ty">void</span><span class="op">&gt;</span><span class="pu">(</span><span class="op">`/sessions/${</span><span class="pr">id</span><span class="op">}`</span><span class="pu">,</span> <span class="pr">data</span><span class="pu">);</span></code></pre>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 11 AXIOS GENERICS -->
+    <section class="chapter fade-in" id="axios-generics">
+      <div class="chapter-header">
+        <span class="chapter-num">11</span>
+        <h2>Axios Generics</h2>
+        <span class="chapter-tag tag-generic">Advanced</span>
+      </div>
+      <p>Axios's HTTP methods accept a generic type that tells TypeScript what the <strong>response data shape</strong> will be.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">TypeScript</span>
+          <span class="code-file">src/api/api.ts</span>
+        </div>
+        <pre><code><span class="cm">// API.get&lt;Exercise[]&gt; → response.data is typed as Exercise[]</span>
+<span class="kw">export const</span> <span class="fn">getExercises</span> <span class="op">=</span> <span class="pu">()</span> <span class="op">=&gt;</span>
+  <span class="pr">API</span><span class="pu">.</span><span class="fn">get</span><span class="op">&lt;</span><span class="ty">Exercise</span><span class="pu">[]</span><span class="op">&gt;</span><span class="pu">(</span><span class="st">'/exercises'</span><span class="pu">).</span><span class="fn">then</span><span class="pu">(</span><span class="pr">r</span> <span class="op">=&gt;</span> <span class="pr">r</span><span class="pu">.</span><span class="pr">data</span><span class="pu">);</span>
+
+<span class="cm">// post&lt;SetResponseDTO&gt; — sending SetLogRequest, getting SetResponseDTO back</span>
+<span class="kw">export const</span> <span class="fn">logSet</span> <span class="op">=</span> <span class="pu">(</span><span class="pr">request</span><span class="op">:</span> <span class="ty">SetLogRequest</span><span class="pu">)</span> <span class="op">=&gt;</span>
+  <span class="pr">API</span><span class="pu">.</span><span class="fn">post</span><span class="op">&lt;</span><span class="ty">SetResponseDTO</span><span class="op">&gt;</span><span class="pu">(</span><span class="st">'/sets'</span><span class="pu">,</span> <span class="pr">request</span><span class="pu">).</span><span class="fn">then</span><span class="pu">(</span><span class="pr">r</span> <span class="op">=&gt;</span> <span class="pr">r</span><span class="pu">.</span><span class="pr">data</span><span class="pu">);</span>
+
+<span class="cm">// put&lt;void&gt; — PUT that returns nothing meaningful</span>
+<span class="kw">export const</span> <span class="fn">patchSession</span> <span class="op">=</span> <span class="pu">(</span><span class="pr">id</span><span class="op">:</span> <span class="ty">number</span><span class="pu">,</span> <span class="pr">data</span><span class="op">:</span> <span class="ty">Record</span><span class="op">&lt;</span><span class="ty">string</span><span class="pu">,</span> <span class="ty">unknown</span><span class="op">&gt;</span><span class="pu">)</span> <span class="op">=&gt;</span>
+  <span class="pr">API</span><span class="pu">.</span><span class="fn">put</span><span class="op">&lt;</span><span class="ty">void</span><span class="op">&gt;</span><span class="pu">(</span><span class="op">`/sessions/${</span><span class="pr">id</span><span class="op">}`</span><span class="pu">,</span> <span class="pr">data</span><span class="pu">);</span>
+
+<span class="cm">// Interceptors — automatically attach the auth token to every request</span>
+<span class="pr">API</span><span class="pu">.</span><span class="pr">interceptors</span><span class="pu">.</span><span class="pr">request</span><span class="pu">.</span><span class="fn">use</span><span class="pu">((</span><span class="pr">config</span><span class="pu">)</span> <span class="op">=&gt;</span> <span class="pu">{</span>
+  <span class="kw">const</span> <span class="pr">token</span> <span class="op">=</span> <span class="pr">localStorage</span><span class="pu">.</span><span class="fn">getItem</span><span class="pu">(</span><span class="st">'iron_ledger_token'</span><span class="pu">);</span>
+  <span class="kw">if</span> <span class="pu">(</span><span class="pr">token</span><span class="pu">)</span> <span class="pr">config</span><span class="pu">.</span><span class="pr">headers</span><span class="pu">.</span><span class="pr">Authorization</span> <span class="op">=</span> <span class="op">`Bearer ${</span><span class="pr">token</span><span class="op">}`</span><span class="pu">;</span>
+  <span class="kw">return</span> <span class="pr">config</span><span class="pu">;</span>
+<span class="pu">});</span></code></pre>
+      </div>
+      <div class="info-row">
+        <div class="info-card">
+          <div class="ic-head">🎯 Autocomplete</div>
+          <p>After <code>await getExercises()</code>, TypeScript knows you have <code>Exercise[]</code> — every field has autocomplete in your editor.</p>
+        </div>
+        <div class="info-card">
+          <div class="ic-head">🛡️ Documentation</div>
+          <p>The generics act as living documentation — you can see exactly what the API returns just by reading the function signature.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 12 TYPED ARROW FUNCTIONS -->
+    <section class="chapter fade-in" id="arrow-fns">
+      <div class="chapter-header">
+        <span class="chapter-num">12</span>
+        <h2>Typed Arrow Functions</h2>
+        <span class="chapter-tag tag-pattern">Pattern</span>
+      </div>
+      <p>Arrow functions in TypeScript can have typed parameters and return types. Several patterns appear in this project:</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">TypeScript</span>
+          <span class="code-file">Various files</span>
+        </div>
+        <pre><code><span class="cm">// 1. Function typed in an interface</span>
+<span class="pr">login</span><span class="op">:</span> <span class="pu">(</span><span class="pr">token</span><span class="op">:</span> <span class="ty">string</span><span class="pu">,</span> <span class="pr">username</span><span class="op">:</span> <span class="ty">string</span><span class="pu">)</span> <span class="op">=&gt;</span> <span class="ty">void</span><span class="pu">;</span>
+
+<span class="cm">// 2. Implementation matching the type</span>
+<span class="kw">const</span> <span class="fn">login</span> <span class="op">=</span> <span class="pu">(</span><span class="pr">newToken</span><span class="op">:</span> <span class="ty">string</span><span class="pu">,</span> <span class="pr">username</span><span class="op">:</span> <span class="ty">string</span><span class="pu">)</span> <span class="op">=&gt;</span> <span class="pu">{</span>
+  <span class="pr">localStorage</span><span class="pu">.</span><span class="fn">setItem</span><span class="pu">(</span><span class="st">'iron_ledger_token'</span><span class="pu">,</span> <span class="pr">newToken</span><span class="pu">);</span>
+  <span class="fn">setToken</span><span class="pu">(</span><span class="pr">newToken</span><span class="pu">);</span>
+<span class="pu">};</span>
+
+<span class="cm">// 3. Typed callback parameters — from SessionAccordionCard.tsx</span>
+<span class="pr">session</span><span class="pu">.</span><span class="pr">exercises</span><span class="op">?.</span><span class="fn">map</span><span class="pu">((</span><span class="pr">block</span><span class="op">:</span> <span class="ty">any</span><span class="pu">,</span> <span class="pr">i</span><span class="op">:</span> <span class="ty">number</span><span class="pu">)</span> <span class="op">=&gt;</span> <span class="pu">(</span><span class="cm">/* JSX */</span><span class="pu">))</span>
+
+<span class="cm">// 4. Utility function with explicit return type — from SessionAccordionCard.tsx</span>
+<span class="kw">function</span> <span class="fn">calculateSimpleE1RM</span><span class="pu">(</span><span class="pr">weight</span><span class="op">:</span> <span class="ty">number</span><span class="pu">,</span> <span class="pr">reps</span><span class="op">:</span> <span class="ty">number</span><span class="pu">)</span><span class="op">:</span> <span class="ty">string</span> <span class="pu">{</span>
+  <span class="kw">if</span> <span class="pu">(</span><span class="pr">reps</span> <span class="op">===</span> <span class="nu">1</span><span class="pu">)</span> <span class="kw">return</span> <span class="pr">weight</span><span class="pu">.</span><span class="fn">toFixed</span><span class="pu">(</span><span class="nu">1</span><span class="pu">);</span>
+  <span class="kw">if</span> <span class="pu">(</span><span class="pr">reps</span> <span class="op">&gt;=</span> <span class="nu">2</span> <span class="op">&amp;&amp;</span> <span class="pr">reps</span> <span class="op">&lt;=</span> <span class="nu">5</span><span class="pu">)</span> <span class="kw">return</span> <span class="pu">(</span><span class="pr">weight</span> <span class="op">*</span> <span class="nu">36.0</span> <span class="op">/</span> <span class="pu">(</span><span class="nu">37.0</span> <span class="op">-</span> <span class="pr">reps</span><span class="pu">)).</span><span class="fn">toFixed</span><span class="pu">(</span><span class="nu">1</span><span class="pu">);</span>
+  <span class="kw">return</span> <span class="st">'—'</span><span class="pu">;</span>
+<span class="pu">}</span></code></pre>
+      </div>
+      <div class="callout">
+        <div class="callout-title">💡 import type</div>
+        You'll see <code>import type { Exercise } from '../types'</code> throughout the project. The <code>type</code> keyword means this import is erased completely from compiled JavaScript — it exists only for type checking. Slightly smaller bundle, no runtime cost.
+      </div>
+      <div class="info-row">
+        <div class="info-card">
+          <div class="ic-head">🔢 void</div>
+          <p>Return type <code>void</code> = "this function doesn't return a useful value." Like <code>logout()</code> — it does work but returns nothing.</p>
+        </div>
+        <div class="info-card">
+          <div class="ic-head">🏷️ any</div>
+          <p><code>any</code> turns off TypeScript for that value. Used in a few places (<code>session: any</code>) when the full type is complex. A trade-off.</p>
+        </div>
+        <div class="info-card">
+          <div class="ic-head">❓ Optional chaining <code>?.</code></div>
+          <p><code>session.exercises?.map(...)</code> — if <code>exercises</code> is null/undefined, returns undefined instead of throwing.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- CHEATSHEET -->
+    <section class="chapter fade-in" id="quick-ref">
+      <div class="chapter-header">
+        <span class="chapter-num">📋</span>
+        <h2>Quick Reference Cheatsheet</h2>
+        <span class="chapter-tag tag-util">Summary</span>
+      </div>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">TypeScript</span>
+          <span class="code-file">Every concept — one scroll</span>
+        </div>
+        <pre><code><span class="cm">// INTERFACE — object blueprint</span>
+<span class="kw">interface</span> <span class="ty">Exercise</span> <span class="pu">{</span> <span class="pr">id</span><span class="op">:</span> <span class="ty">number</span><span class="pu">;</span> <span class="pr">name</span><span class="op">:</span> <span class="ty">string</span><span class="pu">;</span> <span class="pu">}</span>
+
+<span class="cm">// TYPE ALIAS — name for any type</span>
+<span class="kw">type</span> <span class="ty">StrengthGrade</span> <span class="op">=</span> <span class="st">'PLATINUM'</span> <span class="op">|</span> <span class="st">'GOLD'</span> <span class="op">|</span> <span class="st">'SILVER'</span> <span class="op">|</span> <span class="st">'BASELINE'</span><span class="pu">;</span>
+
+<span class="cm">// UNION — value can be multiple types</span>
+<span class="pr">rir</span><span class="op">:</span> <span class="ty">number</span> <span class="op">|</span> <span class="ty">null</span><span class="pu">;</span>
+
+<span class="cm">// OPTIONAL — field may be absent</span>
+<span class="pr">rpe</span><span class="op">?:</span> <span class="ty">number</span><span class="pu">;</span>
+
+<span class="cm">// GENERIC — reusable type slot (filled when used)</span>
+<span class="fn">useState</span><span class="op">&lt;</span><span class="ty">string</span> <span class="op">|</span> <span class="ty">null</span><span class="op">&gt;</span><span class="pu">(</span><span class="kw">null</span><span class="pu">)</span>
+<span class="fn">createContext</span><span class="op">&lt;</span><span class="ty">AuthContextType</span> <span class="op">|</span> <span class="ty">undefined</span><span class="op">&gt;</span><span class="pu">(</span><span class="kw">undefined</span><span class="pu">)</span>
+
+<span class="cm">// REACT.FC — typed functional component</span>
+<span class="kw">const</span> <span class="fn">MyComp</span><span class="op">:</span> <span class="ty">React</span><span class="pu">.</span><span class="ty">FC</span><span class="op">&lt;</span><span class="pu">{</span> <span class="pr">children</span><span class="op">:</span> <span class="ty">ReactNode</span> <span class="pu">}</span><span class="op">&gt;</span> <span class="op">=</span> <span class="pu">({</span> <span class="pr">children</span> <span class="pu">})</span> <span class="op">=&gt;</span> <span class="op">&lt;&gt;</span><span class="pu">{</span><span class="pr">children</span><span class="pu">}</span><span class="op">&lt;/&gt;;</span>
+
+<span class="cm">// RECORD — keyed object type</span>
+<span class="ty">Record</span><span class="op">&lt;</span><span class="ty">StrengthGrade</span><span class="pu">,</span> <span class="pu">{</span> <span class="pr">bg</span><span class="op">:</span> <span class="ty">string</span> <span class="pu">}</span><span class="op">&gt;</span>
+
+<span class="cm">// PARTIAL — all fields become optional</span>
+<span class="ty">Partial</span><span class="op">&lt;</span><span class="ty">Exercise</span><span class="op">&gt;</span>
+
+<span class="cm">// AXIOS GENERIC — type the response</span>
+<span class="pr">API</span><span class="pu">.</span><span class="fn">get</span><span class="op">&lt;</span><span class="ty">Exercise</span><span class="pu">[]</span><span class="op">&gt;</span><span class="pu">(</span><span class="st">'/exercises'</span><span class="pu">)</span>
+
+<span class="cm">// IMPORT TYPE — type-only import (erased at build time)</span>
+<span class="kw">import type</span> <span class="pu">{</span> <span class="ty">Exercise</span> <span class="pu">}</span> <span class="kw">from</span> <span class="st">'../types'</span><span class="pu">;</span>
+
+<span class="cm">// OPTIONAL CHAINING — safe property access</span>
+<span class="pr">session</span><span class="pu">.</span><span class="pr">exercises</span><span class="op">?.</span><span class="fn">map</span><span class="pu">(...)</span></code></pre>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <p>Built for the <a href="#">Iron Ledger</a> project &middot; Every snippet is from your actual codebase 🏋️</p>
+</footer>
+
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+<script>
+  const bar = document.getElementById('progress-bar');
+  window.addEventListener('scroll', () => {
+    bar.style.width = (window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100) + '%';
+  }, { passive: true });
+
+  const btn = document.getElementById('back-top');
+  window.addEventListener('scroll', () => btn.classList.toggle('show', window.scrollY > 400), { passive: true });
+
+  const fadeEls = document.querySelectorAll('.fade-in');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  fadeEls.forEach(el => obs.observe(el));
+
+  const sections = document.querySelectorAll('.chapter[id]');
+  const sideLinks = document.querySelectorAll('.sidebar a');
+  const activateLink = () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
+    sideLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
+  };
+  window.addEventListener('scroll', activateLink, { passive: true });
+  activateLink();
+</script>
+</body>
+</html>

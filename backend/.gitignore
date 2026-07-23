@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Local secrets — never commit! ###
+**/resources/application-local.properties
+run-local.ps1

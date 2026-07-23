@@ -18,7 +18,7 @@ export default function StatsRow({ stats }: StatsRowProps) {
   };
 
   const hoverEffect = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 107, 53, 0.3)';
+    e.currentTarget.style.boxShadow = '0 0 15px rgba(192, 133, 82, 0.15)';
   };
 
   const removeHover = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -30,39 +30,39 @@ export default function StatsRow({ stats }: StatsRowProps) {
       
       {/* Card 1 */}
       <div className="iron-card" style={cardStyle} onMouseEnter={hoverEffect} onMouseLeave={removeHover}>
-        <div style={{ fontFamily: 'var(--font-display)', color: '#888', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+        <div style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-muted)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
           HIGHEST TOP SET
         </div>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '32px', color: 'var(--color-accent-ember)', margin: '8px 0' }}>
           {stats.highestTopSet}kg
         </div>
-        <div style={{ fontFamily: 'var(--font-display)', color: '#555', fontSize: '12px' }}>
+        <div style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-muted)', fontSize: '12px' }}>
           this month
         </div>
       </div>
 
       {/* Card 2 */}
       <div className="iron-card" style={cardStyle} onMouseEnter={hoverEffect} onMouseLeave={removeHover}>
-        <div style={{ fontFamily: 'var(--font-display)', color: '#888', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+        <div style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-muted)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
           SESSIONS
         </div>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '32px', color: 'var(--color-accent-ember)', margin: '8px 0' }}>
           {stats.totalSessions}
         </div>
-        <div style={{ fontFamily: 'var(--font-display)', color: '#555', fontSize: '12px' }}>
+        <div style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-muted)', fontSize: '12px' }}>
           logged all time
         </div>
       </div>
 
       {/* Card 3 */}
       <div className="iron-card" style={cardStyle} onMouseEnter={hoverEffect} onMouseLeave={removeHover}>
-        <div style={{ fontFamily: 'var(--font-display)', color: '#888', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+        <div style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-muted)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
           CURRENT STREAK
         </div>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '32px', color: 'var(--color-accent-ember)', margin: '8px 0' }}>
           {stats.currentStreak} days
         </div>
-        <div style={{ fontFamily: 'var(--font-display)', color: '#555', fontSize: '12px' }}>
+        <div style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-muted)', fontSize: '12px' }}>
           consecutive
         </div>
       </div>

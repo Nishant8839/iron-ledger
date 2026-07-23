@@ -58,7 +58,7 @@ export interface SetLogRequest {
   sessionId: number;
   weight: number;
   reps: number;
-  rpe: number;
+  rpe?: number | null;
   rir?: number | null;
   setNote?: string | null;
   isTopSet: boolean;

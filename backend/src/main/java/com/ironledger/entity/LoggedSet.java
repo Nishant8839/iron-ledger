@@ -36,7 +36,6 @@ public class LoggedSet {
     @Column(nullable = false)
     private Integer reps;
 
-    @Column(nullable = false)
     private Integer rpe;
 
     private boolean isTopSet;

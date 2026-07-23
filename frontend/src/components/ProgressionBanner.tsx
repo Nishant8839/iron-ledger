@@ -8,9 +8,9 @@ export default function ProgressionBanner({ alert }: { alert: ProgressionAlert |
     <div
       className="rounded-xl p-4 mb-4 animate-fade-in"
       style={{
-        background: 'linear-gradient(135deg, rgba(255,107,53,0.15) 0%, rgba(255,159,28,0.08) 100%)',
-        border: '1px solid rgba(255,107,53,0.3)',
-        boxShadow: '0 0 20px rgba(255,107,53,0.1)',
+        background: 'linear-gradient(135deg, rgba(192,133,82,0.10) 0%, rgba(218,180,157,0.06) 100%)',
+        border: '1px solid rgba(192,133,82,0.25)',
+        boxShadow: '0 0 20px rgba(192,133,82,0.06)',
       }}
     >
       <div className="flex items-start gap-3">
@@ -23,7 +23,7 @@ export default function ProgressionBanner({ alert }: { alert: ProgressionAlert |
           <TrendingUp size={16} color="#fff" />
         </div>
         <div>
-          <p className="font-semibold text-sm" style={{ color: 'var(--color-accent-flame)' }}>
+          <p className="font-semibold text-sm" style={{ color: 'var(--color-accent-ember)' }}>
             {alert.message}
           </p>
           <p className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)' }}>

@@ -59,7 +59,7 @@ export default function SessionEditModal({ session, exercises, onClose, onSave }
           exerciseName: s.exerciseName,
           weight: Number(s.weight),
           reps: Number(s.reps),
-          rpe: Number(s.rpe),
+          rpe: s.rpe ? Number(s.rpe) : null,
           isTopSet: s.isTopSet,
           setOrder: idx + 1
         }))
@@ -93,7 +93,7 @@ export default function SessionEditModal({ session, exercises, onClose, onSave }
   return (
     <div style={{
       position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-      background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)',
+      background: 'rgba(74, 74, 74, 0.6)', backdropFilter: 'blur(4px)',
       display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 999,
       padding: '20px', fontFamily: 'var(--font-sans)'
     }}>
@@ -103,7 +103,7 @@ export default function SessionEditModal({ session, exercises, onClose, onSave }
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h2 style={{ fontFamily: 'var(--font-display)', margin: 0, textTransform: 'uppercase' }}>Edit Session</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--color-text-primary)', cursor: 'pointer' }}>
             <X size={24} />
           </button>
         </div>
@@ -111,18 +111,18 @@ export default function SessionEditModal({ session, exercises, onClose, onSave }
         <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
             <div style={{ flex: 1, minWidth: '200px' }}>
-              <label style={{ display: 'block', fontSize: '11px', color: '#888', marginBottom: '8px', textTransform: 'uppercase' }}>Date</label>
+              <label style={{ display: 'block', fontSize: '11px', color: 'var(--color-text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Date</label>
               <input type="date" className="iron-input" value={date} onChange={e => setDate(e.target.value)} required />
             </div>
             <div style={{ flex: 2, minWidth: '200px' }}>
-              <label style={{ display: 'block', fontSize: '11px', color: '#888', marginBottom: '8px', textTransform: 'uppercase' }}>Session Notes</label>
+              <label style={{ display: 'block', fontSize: '11px', color: 'var(--color-text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Session Notes</label>
               <input type="text" className="iron-input" value={notes} onChange={e => setNotes(e.target.value)} />
             </div>
           </div>
 
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <label style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase' }}>Logged Sets</label>
+              <label style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>Logged Sets</label>
               <button type="button" onClick={addSet} className="iron-btn iron-btn-secondary" style={{ padding: '4px 12px', fontSize: '11px' }}>
                 <Plus size={14} /> Add Set
               </button>
@@ -130,10 +130,10 @@ export default function SessionEditModal({ session, exercises, onClose, onSave }
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {sets.map((s, idx) => (
-                <div key={s.uid} style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'flex-end', background: 'rgba(255,255,255,0.02)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div key={s.uid} style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'flex-end', background: 'rgba(143,128,115,0.05)', padding: '12px', borderRadius: '8px', border: '1px solid var(--color-border-dim)' }}>
                   <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontSize: '11px', color: '#555', fontFamily: 'var(--font-mono)' }}>Set {idx + 1}</span>
-                    <button type="button" onClick={() => removeSet(s.uid)} style={{ background: 'none', border: 'none', color: '#ff4444', cursor: 'pointer', padding: 0 }}>
+                    <span style={{ fontSize: '11px', color: 'var(--color-text-secondary)', fontFamily: 'var(--font-mono)' }}>Set {idx + 1}</span>
+                    <button type="button" onClick={() => removeSet(s.uid)} style={{ background: 'none', border: 'none', color: '#B54A32', cursor: 'pointer', padding: 0 }}>
                       <Trash2 size={14} />
                     </button>
                   </div>
@@ -160,11 +160,11 @@ export default function SessionEditModal({ session, exercises, onClose, onSave }
                   </div>
 
                   <div style={{ flex: 1, minWidth: '60px' }}>
-                    <input type="number" className="iron-input" style={{ padding: '8px', fontSize: '12px' }} placeholder="RPE" min="1" max="10" value={s.rpe} onChange={e => updateSet(s.uid, 'rpe', e.target.value)} required />
+                    <input type="number" className="iron-input" style={{ padding: '8px', fontSize: '12px' }} placeholder="RPE (optional)" min="1" max="10" value={s.rpe} onChange={e => updateSet(s.uid, 'rpe', e.target.value)} />
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', height: '36px' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', cursor: 'pointer', color: s.isTopSet ? 'var(--color-accent-gold)' : '#888' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', cursor: 'pointer', color: s.isTopSet ? 'var(--color-accent-gold)' : 'var(--color-text-muted)' }}>
                       <input type="checkbox" checked={s.isTopSet} onChange={e => updateSet(s.uid, 'isTopSet', e.target.checked)} style={{ accentColor: 'var(--color-accent-gold)' }} />
                       Top Set
                     </label>
@@ -172,7 +172,7 @@ export default function SessionEditModal({ session, exercises, onClose, onSave }
                 </div>
               ))}
               {sets.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '20px', color: '#555', fontSize: '12px' }}>No sets. Add one to keep the session.</div>
+                <div style={{ textAlign: 'center', padding: '20px', color: 'var(--color-text-secondary)', fontSize: '12px' }}>No sets. Add one to keep the session.</div>
               )}
             </div>
           </div>

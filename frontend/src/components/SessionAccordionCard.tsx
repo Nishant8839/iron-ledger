@@ -21,7 +21,7 @@ export default function SessionAccordionCard({ session, onDelete, onEdit }: Sess
           {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: '16px' }}>{session.date}</span>
           {session.sessionNotes && (
-            <span style={{ fontFamily: 'var(--font-display)', fontSize: '12px', color: '#888' }}>
+            <span style={{ fontFamily: 'var(--font-display)', fontSize: '12px', color: 'var(--color-text-muted)' }}>
               {session.sessionNotes}
             </span>
           )}
@@ -36,7 +36,7 @@ export default function SessionAccordionCard({ session, onDelete, onEdit }: Sess
                   onEdit(session);
                 }}
                 className="iron-btn"
-                style={{ background: 'transparent', color: 'var(--color-text)', padding: '4px 8px', border: '1px solid var(--color-border-dim)', borderRadius: '4px', fontSize: '12px' }}
+                style={{ background: 'transparent', color: 'var(--color-text-primary)', padding: '4px 8px', border: '1px solid var(--color-border-dim)', borderRadius: '4px', fontSize: '12px' }}
                 title="Edit Session"
               >
                 Edit
@@ -51,7 +51,7 @@ export default function SessionAccordionCard({ session, onDelete, onEdit }: Sess
                   }
                 }}
                 className="iron-btn"
-                style={{ background: 'transparent', color: '#ff4444', padding: '4px 8px', border: '1px solid #ff4444', borderRadius: '4px', fontSize: '12px' }}
+                style={{ background: 'transparent', color: '#B54A32', padding: '4px 8px', border: '1px solid #B54A32', borderRadius: '4px', fontSize: '12px' }}
                 title="Delete Session"
               >
                 Delete
@@ -67,8 +67,8 @@ export default function SessionAccordionCard({ session, onDelete, onEdit }: Sess
           {/* Session Note callout */}
           {session.sessionNote && (
             <div style={{
-              borderLeft: '3px solid var(--color-border-strong, #555)',
-              background: 'var(--bg-overlay, rgba(255,255,255,0.03))',
+              borderLeft: '3px solid var(--color-accent-ember)',
+              background: 'rgba(192, 133, 82, 0.05)',
               padding: '10px 14px', marginBottom: '16px',
             }}>
               <div style={{ fontSize: '9px', fontWeight: 600, textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.08em', marginBottom: '4px' }}>
@@ -81,7 +81,7 @@ export default function SessionAccordionCard({ session, onDelete, onEdit }: Sess
           )}
 
           {session.sessionNotes && (
-            <p style={{ fontFamily: 'var(--font-display)', fontSize: '12px', color: '#aaa', marginBottom: '16px', fontStyle: 'italic' }}>
+            <p style={{ fontFamily: 'var(--font-display)', fontSize: '12px', color: 'var(--color-text-muted)', marginBottom: '16px', fontStyle: 'italic' }}>
               "{session.sessionNotes}"
             </p>
           )}
@@ -101,8 +101,8 @@ export default function SessionAccordionCard({ session, onDelete, onEdit }: Sess
                     }}>
                       <span style={{ width: '40px', flexShrink: 0 }}>Set {j+1}</span>
                       <span>{set.weight}kg × {set.reps}</span>
-                      <span style={{ fontSize: '12px', color: '#888' }}>RPE {set.rpe}</span>
-                      <span style={{ fontSize: '12px', color: '#666' }}>
+                      <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>RPE {set.rpe}</span>
+                      <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
                         {set.rir != null ? `RIR ${set.rir}` : '—'}
                       </span>
                       {set.setNote && (
@@ -114,13 +114,13 @@ export default function SessionAccordionCard({ session, onDelete, onEdit }: Sess
                       {set.reps > 10 ? (
                         <span style={{
                           fontSize: '10px', fontWeight: 700, textTransform: 'uppercase',
-                          color: '#E040FB', letterSpacing: '0.04em',
+                          color: '#8F8073', letterSpacing: '0.04em',
                         }}>
                           VOLUME FOCUS
                         </span>
                       ) : set.isTopSet && set.weight && set.reps && (
                         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                          <span style={{ fontSize: '11px', color: 'var(--color-accent-neon, #39FF14)' }}>
+                          <span style={{ fontSize: '11px', color: '#7A9A6D' }}>
                             Est. Relative Strength: {calculateSimpleE1RM(set.weight, set.reps)}kg
                           </span>
                           <span title="Estimated — personal trend tracking only" style={{
@@ -139,7 +139,7 @@ export default function SessionAccordionCard({ session, onDelete, onEdit }: Sess
               </div>
             ))}
             {(!session.exercises || session.exercises.length === 0) && (
-              <div style={{ color: '#555', fontFamily: 'var(--font-display)', fontSize: '13px' }}>No sets logged.</div>
+              <div style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-display)', fontSize: '13px' }}>No sets logged.</div>
             )}
           </div>
         </div>

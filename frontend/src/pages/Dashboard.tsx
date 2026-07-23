@@ -47,17 +47,17 @@ export default function Dashboard() {
           Power Dashboard
         </h1>
         
-        <div style={{ display: 'flex', gap: '8px', background: 'rgba(18, 20, 28, 0.5)', padding: '4px', borderRadius: '8px', backdropFilter: 'blur(8px)' }}>
+        <div style={{ display: 'flex', gap: '8px', background: 'rgba(143, 128, 115, 0.12)', padding: '4px', borderRadius: '8px', backdropFilter: 'blur(8px)' }}>
           <button 
             className={`iron-button ${activeTab === 'OVERVIEW' ? '' : 'secondary'}`}
-            style={{ margin: 0, padding: '8px 16px', fontSize: '14px', background: activeTab === 'OVERVIEW' ? 'var(--color-accent-ember)' : 'transparent', color: activeTab === 'OVERVIEW' ? '#000' : '#888', border: 'none' }}
+            style={{ margin: 0, padding: '8px 16px', fontSize: '14px', background: activeTab === 'OVERVIEW' ? 'var(--color-accent-ember)' : 'transparent', color: activeTab === 'OVERVIEW' ? '#fff' : 'var(--color-text-secondary)', border: 'none' }}
             onClick={() => setActiveTab('OVERVIEW')}
           >
             Overview
           </button>
           <button 
             className={`iron-button ${activeTab === 'TIMELINE' ? '' : 'secondary'}`}
-            style={{ margin: 0, padding: '8px 16px', fontSize: '14px', background: activeTab === 'TIMELINE' ? 'var(--color-accent-ember)' : 'transparent', color: activeTab === 'TIMELINE' ? '#000' : '#888', border: 'none' }}
+            style={{ margin: 0, padding: '8px 16px', fontSize: '14px', background: activeTab === 'TIMELINE' ? 'var(--color-accent-ember)' : 'transparent', color: activeTab === 'TIMELINE' ? '#fff' : 'var(--color-text-secondary)', border: 'none' }}
             onClick={() => setActiveTab('TIMELINE')}
           >
             Progression Timeline

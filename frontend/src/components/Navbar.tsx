@@ -14,7 +14,7 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 backdrop-blur-xl" style={{
-      background: 'rgba(8, 9, 13, 0.85)',
+      background: 'rgba(245, 242, 235, 0.9)',
       borderBottom: '1px solid var(--color-border-dim)',
     }}>
       <div className="flex justify-between items-center max-w-5xl mx-auto px-4 py-3">
@@ -28,8 +28,8 @@ export default function Navbar() {
           <div
             className="w-9 h-9 rounded-lg flex items-center justify-center"
             style={{
-              background: 'linear-gradient(135deg, var(--color-accent-ember) 0%, var(--color-accent-flame) 100%)',
-              boxShadow: '0 2px 12px rgba(255, 107, 53, 0.3)',
+              background: 'linear-gradient(135deg, #C08552 0%, #DAB49D 100%)',
+              boxShadow: '0 2px 12px rgba(192, 133, 82, 0.25)',
             }}
           >
             <Dumbbell size={18} color="#fff" />
@@ -49,8 +49,8 @@ export default function Navbar() {
                 to={link.to}
                 className="relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all duration-200"
                 style={{
-                  color: isActive ? 'var(--color-accent-ember)' : 'var(--color-text-secondary)',
-                  background: isActive ? 'var(--color-accent-ember-dim)' : 'transparent',
+                  color: isActive ? '#fff' : 'var(--color-text-secondary)',
+                  background: isActive ? 'var(--color-accent-ember)' : 'transparent',
                 }}
                 onMouseEnter={e => {
                   if (!isActive) {
@@ -79,8 +79,8 @@ export default function Navbar() {
               background: 'transparent',
             }}
             onMouseEnter={e => {
-              e.currentTarget.style.color = '#ff3b3b';
-              e.currentTarget.style.background = 'rgba(255,59,59,0.1)';
+              e.currentTarget.style.color = '#B54A32';
+              e.currentTarget.style.background = 'rgba(181,74,50,0.08)';
             }}
             onMouseLeave={e => {
               e.currentTarget.style.color = 'var(--color-text-secondary)';

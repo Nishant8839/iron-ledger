@@ -22,7 +22,6 @@ public class LoggedSetRequest {
     @Min(1)
     private Integer reps;
 
-    @NotNull
     @Min(1)
     @Max(10)
     private Integer rpe;

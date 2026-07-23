@@ -131,11 +131,11 @@ export default function LogWorkout() {
     const block = blocks.find(b => b.id === blockId);
     if (!block) return;
     const s = block.sets[idx];
-    if (!s.weight || !s.reps || !s.rpe) { alert('Fill weight, reps, RPE.'); return; }
+    if (!s.weight || !s.reps) { alert('Fill weight and reps.'); return; }
     try {
       const resp = await logSet({
         exerciseName: block.exerciseName, sessionId: activeSessionId,
-        weight: Number(s.weight), reps: Number(s.reps), rpe: Number(s.rpe),
+        weight: Number(s.weight), reps: Number(s.reps), rpe: s.rpe ? Number(s.rpe) : null,
         rir: s.rir ? Number(s.rir) : null,
         setNote: s.setNote || null,
         isTopSet: s.isTopSet, setOrder: idx + 1,
@@ -237,7 +237,7 @@ export default function LogWorkout() {
           </p>
         </div>
         <span style={{
-          background: 'rgba(0,245,160,0.12)', color: 'var(--color-accent-neon)',
+          background: 'rgba(122, 154, 109, 0.12)', color: 'var(--color-accent-neon)',
           padding: '6px 14px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em',
           textTransform: 'uppercase', borderRadius: '6px',
         }}>● Active</span>
@@ -285,7 +285,7 @@ export default function LogWorkout() {
             {/* Target Banner */}
             {block.target && (
               <div style={{
-                background: 'rgba(0, 245, 160, 0.08)', border: '1px solid rgba(0, 245, 160, 0.25)',
+                background: 'rgba(122, 154, 109, 0.08)', border: '1px solid rgba(122, 154, 109, 0.25)',
                 padding: '10px 14px', marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                 fontSize: '13px', fontFamily: 'var(--font-mono)',
               }}>
@@ -324,15 +324,15 @@ export default function LogWorkout() {
                     {s.logged ? (
                       <div>
                         <p className="font-mono" style={{ fontSize: '13px', color: 'var(--color-text-secondary)', margin: '0 0 4px 0' }}>
-                          {s.weight}kg × {s.reps} reps @ RPE {s.rpe}
-                          {s.rir && <span style={{ marginLeft: '6px', color: '#888' }}>RIR {s.rir}</span>}
+                          {s.weight}kg × {s.reps} reps{s.rpe && ` @ RPE ${s.rpe}`}
+                          {s.rir && <span style={{ marginLeft: '6px', color: 'var(--color-text-muted)' }}>RIR {s.rir}</span>}
                           {s.isTopSet && <span style={{ marginLeft: '8px', color: 'var(--color-accent-gold)', fontWeight: 700, fontSize: '11px' }}>★ TOP SET</span>}
                         </p>
                         {/* VOLUME FOCUS or e1RM display */}
                         {s.progressionResult && (
                           <span className="font-mono" style={{
                             fontSize: '11px', marginTop: '2px', display: 'inline-block',
-                            color: s.progressionResult.isVolumeRange ? 'var(--color-accent-plasma, #E040FB)' : 'var(--color-accent-neon)',
+                            color: s.progressionResult.isVolumeRange ? '#8F8073' : 'var(--color-accent-neon)',
                           }}>
                             {s.progressionResult.isVolumeRange
                               ? 'VOLUME FOCUS'
@@ -340,7 +340,7 @@ export default function LogWorkout() {
                           </span>
                         )}
                         {s.setNote && (
-                          <p style={{ fontSize: '11px', color: '#888', marginTop: '4px', fontStyle: 'italic' }}>📝 {s.setNote}</p>
+                          <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '4px', fontStyle: 'italic' }}>📝 {s.setNote}</p>
                         )}
                       </div>
                     ) : (
@@ -361,7 +361,7 @@ export default function LogWorkout() {
                             </label>
                             <div style={{ position: 'relative' }}>
                               <input type="range" min="1" max="10" className="iron-input" style={{ padding: '0', height: '38px', cursor: 'pointer' }} value={s.rpe || 5} onChange={e => updateSetField(block.id, idx, 'rpe', e.target.value)} />
-                              <div style={{ display:'flex', justifyContent:'space-between', marginTop:'4px', fontFamily:'Space Grotesk', fontSize:'10px', color:'#555' }}>
+                              <div style={{ display:'flex', justifyContent:'space-between', marginTop:'4px', fontFamily:'Space Grotesk', fontSize:'10px', color:'var(--color-text-secondary)' }}>
                                 <span>1<br/>Recovery</span>
                                 <span style={{textAlign:'center'}}>5<br/>Moderate</span>
                                 <span style={{textAlign:'center'}}>8<br/>Hard</span>
@@ -375,7 +375,7 @@ export default function LogWorkout() {
                               RIR
                             </label>
                             <input type="number" min="0" max="5" className="iron-input" style={{ padding: '8px 6px', fontSize: '13px', textAlign: 'center' }} value={s.rir} onChange={e => updateSetField(block.id, idx, 'rir', e.target.value)} placeholder="-" />
-                            <div style={{ fontSize: '8px', color: '#555', marginTop: '2px', textAlign: 'center' }}>Reps left<br/>in tank</div>
+                            <div style={{ fontSize: '8px', color: 'var(--color-text-secondary)', marginTop: '2px', textAlign: 'center' }}>Reps left<br/>in tank</div>
                           </div>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>

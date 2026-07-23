@@ -63,10 +63,10 @@ export default function SessionSummary({
 
   const getTrendColor = (dir: string) => {
     switch (dir) {
-      case 'UP': return 'var(--color-accent-neon, #39FF14)';
-      case 'DOWN': return '#ff4444';
-      case 'STABLE': return '#C0C0C0';
-      default: return 'var(--color-text-muted, #888)';
+      case 'UP': return '#7A9A6D';
+      case 'DOWN': return '#B54A32';
+      case 'STABLE': return '#8F8073';
+      default: return 'var(--color-text-muted)';
     }
   };
 
@@ -127,9 +127,10 @@ export default function SessionSummary({
                 <div>
                   <span style={{
                     display: 'inline-block', padding: '4px 10px',
-                    background: 'rgba(224, 64, 251, 0.12)', color: '#E040FB',
+                    background: 'rgba(143, 128, 115, 0.10)', color: '#8F8073',
                     fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 700,
                     textTransform: 'uppercase', letterSpacing: '0.06em',
+                    borderRadius: '6px',
                   }}>
                     VOLUME FOCUS
                   </span>
@@ -142,7 +143,7 @@ export default function SessionSummary({
                 <div>
                   {/* e1RM value */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--color-accent-ember, #FF6B00)', fontWeight: 700 }}>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--color-accent-ember)', fontWeight: 700 }}>
                       Est. Relative Strength: {pr.referenceE1RM}kg
                     </span>
                     <span title="Estimated — personal trend tracking only" style={{
@@ -166,9 +167,10 @@ export default function SessionSummary({
                   {/* Decision Gate */}
                   {showGate && (
                     <div style={{
-                      border: '1px solid var(--color-accent-ember, #FF6B00)',
+                      border: '1px solid var(--color-accent-ember)',
                       padding: '14px 16px', marginTop: '8px',
-                      background: 'rgba(255, 107, 0, 0.05)',
+                      background: 'rgba(192, 133, 82, 0.05)',
+                      borderRadius: '10px',
                     }}>
                       <p style={{
                         fontFamily: 'var(--font-display)', fontSize: '12px', fontWeight: 600,
@@ -226,7 +228,7 @@ export default function SessionSummary({
             SESSION REFLECTION
           </label>
           {reflectionSaved && (
-            <span style={{ fontSize: '11px', color: 'var(--color-accent-neon)', fontFamily: 'var(--font-mono)' }}>
+            <span style={{ fontSize: '11px', color: '#7A9A6D', fontFamily: 'var(--font-mono)' }}>
               ✓ Saved
             </span>
           )}

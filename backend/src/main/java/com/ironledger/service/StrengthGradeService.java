@@ -46,7 +46,6 @@ public class StrengthGradeService {
 
         Double currentWeight = currentSet.getWeight();
         Integer currentReps = currentSet.getReps();
-        Integer currentRpe = currentSet.getRpe();
 
         // If a 5-rep set exists in the previous session
         if (previousFiveRepSet.isPresent()) {
@@ -70,14 +69,9 @@ public class StrengthGradeService {
         if (previousSet != null) {
             Double prevWeight = previousSet.getWeight();
             Integer prevReps = previousSet.getReps();
-            Integer prevRpe = previousSet.getRpe();
 
             if (currentWeight.equals(prevWeight) && currentReps > prevReps) {
                 return StrengthGrade.GOLD;
-            }
-
-            if (currentWeight.equals(prevWeight) && currentReps.equals(prevReps) && currentRpe < prevRpe) {
-                return StrengthGrade.SILVER;
             }
         }
 
