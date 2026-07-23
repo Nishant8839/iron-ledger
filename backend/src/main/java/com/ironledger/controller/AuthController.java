@@ -66,16 +66,23 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
+        String identifier = request.getUsername() != null ? request.getUsername() : request.getEmail();
+        if (identifier == null || identifier.isBlank()) {
+            return ResponseEntity.badRequest().body("Username or email is required");
+        }
+
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            request.getUsername(),
+                            identifier,
                             request.getPassword()));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
 
-        User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
+        User user = userRepository.findByUsername(identifier)
+                .orElseGet(() -> userRepository.findByEmail(identifier).orElseThrow());
+        
         String jwtToken = jwtService.generateToken(user);
 
         return ResponseEntity.ok(AuthResponse.builder()
