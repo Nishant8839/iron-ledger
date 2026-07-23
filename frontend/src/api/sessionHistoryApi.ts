@@ -32,7 +32,7 @@ export interface UpdateSetRequestDTO {
     exerciseName?: string;
     weight: number;
     reps: number;
-    rpe: number;
+    rpe?: number | null;
     isTopSet: boolean;
     setOrder: number;
 }
